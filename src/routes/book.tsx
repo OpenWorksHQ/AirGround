@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/book")({
   validateSearch: (search: Record<string, unknown>) => ({
-    mode: search.mode === "care" ? ("care" as const) : ("once" as const),
+    mode: search["mode"] === "care" ? ("care" as const) : ("once" as const),
   }),
   head: () => ({
     meta: [

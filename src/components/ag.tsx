@@ -32,7 +32,11 @@ export function Button({ className, variant, size, ...props }: ButtonProps) {
   return <button className={cn(buttonStyles({ variant, size }), className)} {...props} />;
 }
 
-type ButtonLinkProps = LinkProps & VariantProps<typeof buttonStyles> & { className?: string };
+type ButtonLinkProps = LinkProps &
+  VariantProps<typeof buttonStyles> & {
+    className?: string;
+    onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+  };
 
 export function ButtonLink({ className, variant, size, ...props }: ButtonLinkProps) {
   return <Link className={cn(buttonStyles({ variant, size }), className)} {...props} />;
