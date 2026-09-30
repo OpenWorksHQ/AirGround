@@ -13,16 +13,22 @@ import {
   FREQUENCIES,
   TIME_WINDOWS,
   clearDraft,
+  emptyDraft,
   loadDraft,
   saveDraft,
   type BookingDraft,
 } from "@/lib/booking";
 import { useCategories, useServices } from "@/lib/catalog";
+import { formatPrice, providerDateRules, useProvider } from "@/lib/providers";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/book")({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { mode: "once" | "care"; provider?: string | undefined; service?: string | undefined } => ({
     mode: search["mode"] === "care" ? ("care" as const) : ("once" as const),
+    provider: typeof search["provider"] === "string" ? (search["provider"] as string) : undefined,
+    service: typeof search["service"] === "string" ? (search["service"] as string) : undefined,
   }),
   head: () => ({
     meta: [
@@ -84,7 +90,12 @@ function Progress({ steps, current }: { steps: string[]; current: number }) {
 }
 
 function BookPage() {
-  const { mode } = Route.useSearch();
+  const { mode, provider: providerSlug, service: presetService } = Route.useSearch();
+  const { data: providerData } = useProvider(providerSlug);
+  const provider = providerData?.provider ?? null;
+  const offerings = providerData?.offerings ?? null;
+  const dateRules = providerDateRules(provider);
+  const timeWindows = provider && provider.time_windows.length > 0 ? provider.time_windows : TIME_WINDOWS;
   const navigate = useNavigate();
   const { user } = useAuth();
   const { areas, stateCode, setStateCode } = useLocationArea();
@@ -97,9 +108,15 @@ function BookPage() {
   const steps = mode === "once" ? ONCE_STEPS : CARE_STEPS;
 
   useEffect(() => {
-    const loaded = loadDraft();
-    setDraft({ ...loaded, mode, stateCode: loaded.stateCode || stateCode });
-  }, [mode, stateCode]);
+    let loaded = loadDraft();
+    // Keep provider-page drafts separate from main-site drafts.
+    if ((loaded.providerSlug ?? null) !== (providerSlug ?? null)) {
+      loaded = { ...emptyDraft(), address: loaded.address, zip: loaded.zip, city: loaded.city };
+    }
+    const next = { ...loaded, mode, providerSlug: providerSlug ?? null, stateCode: loaded.stateCode || stateCode };
+    saveDraft(next);
+    setDraft(next);
+  }, [mode, stateCode, providerSlug]);
 
   const update = (patch: Partial<BookingDraft>) => {
     setDraft((prev) => {
@@ -110,24 +127,68 @@ function BookPage() {
   };
 
   const { data: categories } = useCategories();
-  const { data: allServices } = useServices();
+  const { data: catalogServices } = useServices();
+  const allServices = useMemo(
+    () => (providerSlug ? (offerings ?? []).map((o) => o.service) : catalogServices),
+    [providerSlug, offerings, catalogServices],
+  );
+  const offeringFor = (serviceId: string | null) =>
+    offerings?.find((o) => o.service_id === serviceId) ?? null;
+  const visibleCategories = useMemo(
+    () =>
+      providerSlug
+        ? (categories ?? []).filter((c) => (allServices ?? []).some((s) => s.category_slug === c.slug))
+        : categories,
+    [providerSlug, categories, allServices],
+  );
+
+  // Preselect a service passed from a provider page.
+  useEffect(() => {
+    if (!presetService || !allServices) return;
+    const s = allServices.find((x) => x.id === presetService);
+    if (!s) return;
+    if (mode === "once" && !draft.serviceId) {
+      update({ categorySlug: s.category_slug, serviceId: s.id, serviceName: s.name });
+    }
+    if (mode === "care" && draft.carePicks.length === 0) {
+      const o = offerings?.find((x) => x.service_id === s.id);
+      if (!providerSlug || o?.recurring_enabled) {
+        update({
+          carePicks: [
+            { serviceId: s.id, serviceName: s.name, frequency: o?.allowed_frequencies[0] ?? s.default_frequency ?? "monthly" },
+          ],
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [presetService, allServices, mode, draft.providerSlug]);
 
   const categoryServices = useMemo(
     () => (allServices ?? []).filter((s) => !draft.categorySlug || s.category_slug === draft.categorySlug),
     [allServices, draft.categorySlug],
   );
   const recurringServices = useMemo(
-    () => (allServices ?? []).filter((s) => s.recurring_allowed),
-    [allServices],
+    () =>
+      (allServices ?? []).filter((s) =>
+        providerSlug ? !!offeringFor(s.id)?.recurring_enabled : s.recurring_allowed,
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [allServices, providerSlug, offerings],
   );
 
-  const covered = zipCovered(areas, draft.zip);
+  const covered =
+    provider && provider.zip_codes.length > 0
+      ? draft.zip.length === 5
+        ? provider.zip_codes.includes(draft.zip)
+        : null
+      : zipCovered(areas, draft.zip);
 
   const canAdvance = () => {
     if (mode === "once") {
       if (step === 0) return !!draft.serviceId || !!draft.serviceName;
       if (step === 1) return draft.address.trim().length > 3 && covered === true;
-      if (step === 2) return !!draft.requestedDate && !!draft.timeWindow;
+      if (step === 2)
+        return !!draft.requestedDate && !!draft.timeWindow && dateRules.isAllowed(draft.requestedDate);
       return true;
     }
     if (step === 0) return draft.carePicks.length > 0;
@@ -138,7 +199,22 @@ function BookPage() {
   const submit = async () => {
     if (!user) return;
     setBusy(true);
+    const attribution = provider
+      ? { booking_source: "provider", provider_id: provider.id, provider_slug: provider.slug }
+      : { booking_source: "airground", provider_id: null, provider_slug: null };
     try {
+      // First booking decides how this customer was acquired.
+      const { count } = await supabase
+        .from("service_requests")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id);
+      if (!count && provider) {
+        await supabase
+          .from("profiles")
+          .update({ acquisition_source: "provider", acquired_provider_id: provider.id })
+          .eq("id", user.id)
+          .is("acquired_provider_id", null);
+      }
       // Reuse the matching property, or add it to the account.
       const { data: existing } = await supabase
         .from("properties")
@@ -179,7 +255,11 @@ function BookPage() {
             description: draft.description || null,
             requested_date: draft.requestedDate || null,
             time_window: draft.timeWindow || null,
-            estimate_note: "Estimate confirmed after review",
+            estimate_note: offeringFor(draft.serviceId)?.price != null
+              ? `Provider price ${formatPrice(offeringFor(draft.serviceId)!)}`
+              : "Estimate confirmed after review",
+            quoted_price: offeringFor(draft.serviceId)?.price ?? null,
+            ...attribution,
           })
           .select("request_number")
           .single();
@@ -189,7 +269,7 @@ function BookPage() {
       } else {
         const { data: plan, error: planError } = await supabase
           .from("care_plans")
-          .insert({ user_id: user.id, property_id: propertyId })
+          .insert({ user_id: user.id, property_id: propertyId, ...attribution })
           .select("id")
           .single();
         if (planError) throw planError;
@@ -216,6 +296,8 @@ function BookPage() {
             status: "scheduled" as never,
             care_plan_id: plan.id,
             estimate_note: "Part of your ongoing care plan",
+            quoted_price: offeringFor(p.serviceId)?.price ?? null,
+            ...attribution,
           })),
         );
         if (occError) throw occError;
@@ -279,7 +361,7 @@ function BookPage() {
         <div className="flex gap-2">
           <Link
             to="/book"
-            search={{ mode: "once" }}
+            search={{ mode: "once", provider: providerSlug }}
             className={cn(
               "rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-wider",
               mode === "once" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
@@ -289,7 +371,7 @@ function BookPage() {
           </Link>
           <Link
             to="/book"
-            search={{ mode: "care" }}
+            search={{ mode: "care", provider: providerSlug }}
             className={cn(
               "rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-wider",
               mode === "care" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
@@ -305,7 +387,7 @@ function BookPage() {
         <div>
           <h1 className="display-xl text-[2.2rem]">What should we take care of?</h1>
           <div className="mt-6 flex flex-wrap gap-2">
-            {(categories ?? []).map((c) => (
+            {(visibleCategories ?? []).map((c) => (
               <button
                 key={c.slug}
                 type="button"
@@ -338,6 +420,11 @@ function BookPage() {
               >
                 <span className="block text-sm font-bold">{s.name}</span>
                 <span className="mt-1 block text-xs text-muted-foreground">{s.summary}</span>
+                {offeringFor(s.id) ? (
+                  <span className="mt-2 block text-xs font-bold text-primary">
+                    {formatPrice(offeringFor(s.id)!)}
+                  </span>
+                ) : null}
               </button>
             ))}
             <button
@@ -390,15 +477,20 @@ function BookPage() {
               <input
                 type="date"
                 className={inputStyles}
-                min={new Date().toISOString().slice(0, 10)}
+                min={provider ? dateRules.minDate : new Date().toISOString().slice(0, 10)}
                 value={draft.requestedDate}
                 onChange={(e) => update({ requestedDate: e.target.value })}
               />
             </Field>
+            {!dateRules.isAllowed(draft.requestedDate) ? (
+              <p className="text-sm font-semibold text-destructive">
+                {provider?.name} isn't available that day — pick another date.
+              </p>
+            ) : null}
             <div>
               <span className="eyebrow">Service window</span>
               <div className="mt-2 grid gap-2 sm:grid-cols-3">
-                {TIME_WINDOWS.map((w) => (
+                {timeWindows.map((w) => (
                   <button
                     key={w}
                     type="button"
@@ -482,7 +574,12 @@ function BookPage() {
                         })
                       }
                     >
-                      {FREQUENCIES.map((f) => (
+                      {FREQUENCIES.filter(
+                        (f) =>
+                          !providerSlug ||
+                          (offeringFor(s.id)?.allowed_frequencies ?? []).length === 0 ||
+                          offeringFor(s.id)!.allowed_frequencies.includes(f.value),
+                      ).map((f) => (
                         <option key={f.value} value={f.value}>
                           {f.label}
                         </option>
@@ -522,7 +619,15 @@ function BookPage() {
                   value={`${draft.requestedDate || "—"} · ${draft.timeWindow || "—"}`}
                 />
                 <Row label="Details" value={draft.description || "—"} />
-                <Row label="Pricing" value="Estimate confirmed after review" />
+                <Row
+                  label="Pricing"
+                  value={
+                    offeringFor(draft.serviceId)
+                      ? formatPrice(offeringFor(draft.serviceId)!)
+                      : "Estimate confirmed after review"
+                  }
+                />
+                {provider ? <Row label="Provider" value={provider.name} /> : null}
                 <Row label="Type" value="One-time service" />
               </>
             ) : (
@@ -536,6 +641,7 @@ function BookPage() {
                 ))}
                 <Row label="Address" value={`${draft.address}${draft.city ? `, ${draft.city}` : ""} ${draft.zip}`} />
                 <Row label="Type" value="Ongoing care plan" />
+                {provider ? <Row label="Provider" value={provider.name} /> : null}
               </>
             )}
           </div>
@@ -553,7 +659,9 @@ function BookPage() {
               </p>
               <ButtonLink
                 to="/login"
-                search={{ redirect: mode === "care" ? "/book?mode=care" : "/book?mode=once" }}
+                search={{
+                  redirect: `/book?mode=${mode}${providerSlug ? `&provider=${encodeURIComponent(providerSlug)}` : ""}`,
+                }}
                 size="lg"
                 className="mt-4 w-full"
               >
@@ -568,7 +676,13 @@ function BookPage() {
       <div className="mt-10 flex items-center justify-between border-t border-border pt-6">
         <Button
           variant="quiet"
-          onClick={() => (step === 0 ? navigate({ to: "/" }) : setStep(step - 1))}
+          onClick={() =>
+            step === 0
+              ? providerSlug
+                ? navigate({ to: "/p/$slug", params: { slug: providerSlug } })
+                : navigate({ to: "/" })
+              : setStep(step - 1)
+          }
         >
           <ArrowLeft className="h-4 w-4" strokeWidth={1.5} /> Back
         </Button>

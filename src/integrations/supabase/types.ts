@@ -94,25 +94,34 @@ export type Database = {
       }
       care_plans: {
         Row: {
+          booking_source: string
           created_at: string
           id: string
           property_id: string | null
+          provider_id: string | null
+          provider_slug: string | null
           status: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          booking_source?: string
           created_at?: string
           id?: string
           property_id?: string | null
+          provider_id?: string | null
+          provider_slug?: string | null
           status?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          booking_source?: string
           created_at?: string
           id?: string
           property_id?: string | null
+          provider_id?: string | null
+          provider_slug?: string | null
           status?: string
           updated_at?: string
           user_id?: string
@@ -125,10 +134,19 @@ export type Database = {
             referencedRelation: "properties"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "care_plans_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
         ]
       }
       profiles: {
         Row: {
+          acquired_provider_id: string | null
+          acquisition_source: string
           created_at: string
           email: string | null
           full_name: string | null
@@ -137,6 +155,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          acquired_provider_id?: string | null
+          acquisition_source?: string
           created_at?: string
           email?: string | null
           full_name?: string | null
@@ -145,6 +165,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          acquired_provider_id?: string | null
+          acquisition_source?: string
           created_at?: string
           email?: string | null
           full_name?: string | null
@@ -152,7 +174,15 @@ export type Database = {
           phone?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_acquired_provider_id_fkey"
+            columns: ["acquired_provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       properties: {
         Row: {
@@ -193,6 +223,117 @@ export type Database = {
           updated_at?: string
           user_id?: string
           zip?: string
+        }
+        Relationships: []
+      }
+      provider_services: {
+        Row: {
+          allowed_frequencies: Database["public"]["Enums"]["care_frequency"][]
+          created_at: string
+          enabled: boolean
+          id: string
+          price: number | null
+          price_note: string | null
+          provider_id: string
+          recurring_enabled: boolean
+          service_id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          allowed_frequencies?: Database["public"]["Enums"]["care_frequency"][]
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          price?: number | null
+          price_note?: string | null
+          provider_id: string
+          recurring_enabled?: boolean
+          service_id: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          allowed_frequencies?: Database["public"]["Enums"]["care_frequency"][]
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          price?: number | null
+          price_note?: string | null
+          provider_id?: string
+          recurring_enabled?: boolean
+          service_id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_services_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      providers: {
+        Row: {
+          active: boolean
+          available_days: string[]
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          lead_days: number
+          name: string
+          service_area: string
+          slug: string
+          time_windows: string[]
+          updated_at: string
+          zip_codes: string[]
+        }
+        Insert: {
+          active?: boolean
+          available_days?: string[]
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          lead_days?: number
+          name: string
+          service_area?: string
+          slug: string
+          time_windows?: string[]
+          updated_at?: string
+          zip_codes?: string[]
+        }
+        Update: {
+          active?: boolean
+          available_days?: string[]
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          lead_days?: number
+          name?: string
+          service_area?: string
+          slug?: string
+          time_windows?: string[]
+          updated_at?: string
+          zip_codes?: string[]
         }
         Relationships: []
       }
@@ -264,6 +405,7 @@ export type Database = {
       }
       service_requests: {
         Row: {
+          booking_source: string
           care_plan_id: string | null
           category_slug: string | null
           created_at: string
@@ -271,6 +413,9 @@ export type Database = {
           estimate_note: string | null
           id: string
           property_id: string | null
+          provider_id: string | null
+          provider_slug: string | null
+          quoted_price: number | null
           request_number: string
           requested_date: string | null
           service_id: string | null
@@ -281,6 +426,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          booking_source?: string
           care_plan_id?: string | null
           category_slug?: string | null
           created_at?: string
@@ -288,6 +434,9 @@ export type Database = {
           estimate_note?: string | null
           id?: string
           property_id?: string | null
+          provider_id?: string | null
+          provider_slug?: string | null
+          quoted_price?: number | null
           request_number?: string
           requested_date?: string | null
           service_id?: string | null
@@ -298,6 +447,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          booking_source?: string
           care_plan_id?: string | null
           category_slug?: string | null
           created_at?: string
@@ -305,6 +455,9 @@ export type Database = {
           estimate_note?: string | null
           id?: string
           property_id?: string | null
+          provider_id?: string | null
+          provider_slug?: string | null
+          quoted_price?: number | null
           request_number?: string
           requested_date?: string | null
           service_id?: string | null
@@ -320,6 +473,13 @@ export type Database = {
             columns: ["property_id"]
             isOneToOne: false
             referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
             referencedColumns: ["id"]
           },
           {

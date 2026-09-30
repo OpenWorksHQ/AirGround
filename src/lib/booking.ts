@@ -22,6 +22,7 @@ export type BookingDraft = {
   requestedDate: string;
   timeWindow: string;
   carePicks: CarePick[];
+  providerSlug?: string | null;
 };
 
 export const emptyDraft = (): BookingDraft => ({

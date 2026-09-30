@@ -76,6 +76,9 @@ function AdminRequests() {
                   <p className="truncate text-sm font-bold">
                     {r.service_name}
                     {r.care_plan_id ? " · ongoing care" : ""}
+                    {(r as { provider_slug?: string | null }).provider_slug
+                      ? ` · via ${(r as { provider_slug?: string | null }).provider_slug}`
+                      : ""}
                   </p>
                   <p className="mt-1 truncate text-xs text-muted-foreground">
                     {r.request_number} · {customer?.full_name ?? customer?.email ?? "Customer"} ·{" "}
