@@ -20,6 +20,8 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as AdminRequestsRouteImport } from './routes/admin.requests'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
+import { Route as AdminServiceAreasRouteImport } from './routes/admin.service-areas'
+import { Route as AdminServicesRouteImport } from './routes/admin.services'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesServiceRouteImport } from './routes/services.$service'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
@@ -81,6 +83,16 @@ const AdminScheduleRoute = AdminScheduleRouteImport.update({
   path: '/schedule',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminServiceAreasRoute = AdminServiceAreasRouteImport.update({
+  id: '/service-areas',
+  path: '/service-areas',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminServicesRoute = AdminServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
   id: '/services/',
   path: '/services/',
@@ -126,6 +138,8 @@ export interface FileRoutesByFullPath {
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/requests': typeof AdminRequestsRoute
   '/admin/schedule': typeof AdminScheduleRoute
+  '/admin/service-areas': typeof AdminServiceAreasRoute
+  '/admin/services': typeof AdminServicesRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -143,6 +157,8 @@ export interface FileRoutesByTo {
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/requests': typeof AdminRequestsRoute
   '/admin/schedule': typeof AdminScheduleRoute
+  '/admin/service-areas': typeof AdminServiceAreasRoute
+  '/admin/services': typeof AdminServicesRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
@@ -163,6 +179,8 @@ export interface FileRoutesById {
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/requests': typeof AdminRequestsRoute
   '/admin/schedule': typeof AdminScheduleRoute
+  '/admin/service-areas': typeof AdminServiceAreasRoute
+  '/admin/services': typeof AdminServicesRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -183,6 +201,8 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/requests'
     | '/admin/schedule'
+    | '/admin/service-areas'
+    | '/admin/services'
     | '/services/$service'
     | '/admin/'
     | '/services/'
@@ -200,6 +220,8 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/requests'
     | '/admin/schedule'
+    | '/admin/service-areas'
+    | '/admin/services'
     | '/services/$service'
     | '/admin'
     | '/services'
@@ -219,6 +241,8 @@ export interface FileRouteTypes {
     | '/admin/customers'
     | '/admin/requests'
     | '/admin/schedule'
+    | '/admin/service-areas'
+    | '/admin/services'
     | '/services/$service'
     | '/admin/'
     | '/services/'
@@ -319,6 +343,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminScheduleRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/service-areas': {
+      id: '/admin/service-areas'
+      path: '/service-areas'
+      fullPath: '/admin/service-areas'
+      preLoaderRoute: typeof AdminServiceAreasRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/services': {
+      id: '/admin/services'
+      path: '/services'
+      fullPath: '/admin/services'
+      preLoaderRoute: typeof AdminServicesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/services/': {
       id: '/services/'
       path: '/services'
@@ -385,6 +423,8 @@ interface AdminRouteChildren {
   AdminCustomersRoute: typeof AdminCustomersRoute
   AdminRequestsRoute: typeof AdminRequestsRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
+  AdminServiceAreasRoute: typeof AdminServiceAreasRoute
+  AdminServicesRoute: typeof AdminServicesRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -392,6 +432,8 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCustomersRoute: AdminCustomersRoute,
   AdminRequestsRoute: AdminRequestsRoute,
   AdminScheduleRoute: AdminScheduleRoute,
+  AdminServiceAreasRoute: AdminServiceAreasRoute,
+  AdminServicesRoute: AdminServicesRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
