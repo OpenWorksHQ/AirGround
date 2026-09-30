@@ -181,7 +181,7 @@ export function BookingPanel() {
           ) : null}
         </div>
 
-        {mode === "once" && covered === true ? (
+        {mode === "once" ? (
           <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {list.map((c) => (
               <button

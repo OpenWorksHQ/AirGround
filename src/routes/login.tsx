@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (search: Record<string, unknown>) => ({
-    redirect: typeof search.redirect === "string" ? search.redirect : undefined,
+    redirect: typeof search["redirect"] === "string" ? (search["redirect"] as string) : undefined,
   }),
   head: () => ({
     meta: [
@@ -87,7 +87,7 @@ function LoginPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-[1fr_520px]">
       <div className="relative hidden overflow-hidden border-r border-border bg-paper lg:block">
-        <div className="pointer-events-none absolute -bottom-20 -left-10 h-[80%] w-[80%]">
+        <div className="pointer-events-none absolute -bottom-16 -left-10 h-[min(60%,480px)] w-[min(70%,520px)]">
           <AMark className="h-full w-full" />
         </div>
         <div className="relative p-10">
