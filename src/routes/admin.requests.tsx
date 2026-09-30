@@ -29,7 +29,10 @@ function AdminRequests() {
   );
 
   const update = async (id: string, patch: Record<string, unknown>) => {
-    const { error } = await supabase.from("service_requests").update(patch).eq("id", id);
+    const { error } = await supabase
+      .from("service_requests")
+      .update(patch as never)
+      .eq("id", id);
     if (error) {
       toast.error("Couldn't save that change.");
       return;

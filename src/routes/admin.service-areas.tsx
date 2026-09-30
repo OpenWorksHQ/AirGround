@@ -24,16 +24,28 @@ function AdminAreas() {
   };
 
   const update = async (id: string, patch: Record<string, unknown>) => {
-    const { error } = await supabase.from("service_areas").update(patch).eq("id", id);
-    if (error) return toast.error("Couldn't save that change.");
+    const { error } = await supabase
+      .from("service_areas")
+      .update(patch as never)
+      .eq("id", id);
+    if (error) {
+      toast.error("Couldn't save that change.");
+      return;
+    }
     toast.success("Coverage updated.");
     refresh();
   };
 
   const addZip = async (id: string, current: string[]) => {
     const zip = (zipDraft[id] ?? "").trim();
-    if (!/^\d{5}$/.test(zip)) return toast.error("Enter a 5-digit ZIP code.");
-    if (current.includes(zip)) return toast.error("That ZIP is already covered.");
+    if (!/^\d{5}$/.test(zip)) {
+      toast.error("Enter a 5-digit ZIP code.");
+      return;
+    }
+    if (current.includes(zip)) {
+      toast.error("That ZIP is already covered.");
+      return;
+    }
     await update(id, { zip_codes: [...current, zip].sort() });
     setZipDraft((d) => ({ ...d, [id]: "" }));
   };
@@ -41,7 +53,8 @@ function AdminAreas() {
   const addArea = async () => {
     const code = newState.trim().toUpperCase();
     if (code.length !== 2 || !newName.trim()) {
-      return toast.error("Enter a state name and its 2-letter code.");
+      toast.error("Enter a state name and its 2-letter code.");
+      return;
     }
     const { error } = await supabase.from("service_areas").insert({
       state_code: code,
@@ -50,7 +63,10 @@ function AdminAreas() {
       cities: [],
       active: false,
     });
-    if (error) return toast.error("Couldn't add that area.");
+    if (error) {
+      toast.error("Couldn't add that area.");
+      return;
+    }
     toast.success(`${newName.trim()} added. Turn it on when you're ready to take work there.`);
     setNewState("");
     setNewName("");

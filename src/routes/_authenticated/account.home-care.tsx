@@ -39,35 +39,50 @@ function HomeCare() {
       .from("care_plan_items")
       .update({ frequency: frequency as never })
       .eq("id", id);
-    if (error) return toast.error("Couldn't change that schedule.");
+    if (error) {
+      toast.error("Couldn't change that schedule.");
+      return;
+    }
     toast.success("Schedule updated.");
     refresh();
   };
 
   const togglePause = async (id: string, paused: boolean) => {
     const { error } = await supabase.from("care_plan_items").update({ paused: !paused }).eq("id", id);
-    if (error) return toast.error("Couldn't update that service.");
+    if (error) {
+      toast.error("Couldn't update that service.");
+      return;
+    }
     toast.success(paused ? "Service resumed." : "Service paused.");
     refresh();
   };
 
   const removeItem = async (id: string) => {
     const { error } = await supabase.from("care_plan_items").delete().eq("id", id);
-    if (error) return toast.error("Couldn't remove that service.");
+    if (error) {
+      toast.error("Couldn't remove that service.");
+      return;
+    }
     toast.success("Removed from your plan.");
     refresh();
   };
 
   const addItem = async (planId: string) => {
     const service = recurring.find((s) => s.id === newServiceId);
-    if (!service) return toast.error("Pick a service to add.");
+    if (!service) {
+      toast.error("Pick a service to add.");
+      return;
+    }
     const { error } = await supabase.from("care_plan_items").insert({
       care_plan_id: planId,
       service_id: service.id,
       service_name: service.name,
       frequency: newFrequency as never,
     });
-    if (error) return toast.error("Couldn't add that service.");
+    if (error) {
+      toast.error("Couldn't add that service.");
+      return;
+    }
     toast.success(`${service.name} added to your plan.`);
     setAddingTo(null);
     setNewServiceId("");
