@@ -226,6 +226,35 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_members: {
+        Row: {
+          created_at: string
+          id: string
+          provider_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          provider_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          provider_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_members_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       provider_services: {
         Row: {
           allowed_frequencies: Database["public"]["Enums"]["care_frequency"][]
@@ -586,6 +615,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_provider_member: { Args: { _provider_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "staff" | "customer"
