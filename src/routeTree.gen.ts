@@ -16,6 +16,10 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OngoingCareRouteImport } from './routes/ongoing-care'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
+import { Route as AdminRequestsRouteImport } from './routes/admin.requests'
+import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesServiceRouteImport } from './routes/services.$service'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
@@ -57,6 +61,26 @@ const OngoingCareRoute = OngoingCareRouteImport.update({
   path: '/ongoing-care',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCustomersRoute = AdminCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRequestsRoute = AdminRequestsRouteImport.update({
+  id: '/requests',
+  path: '/requests',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminScheduleRoute = AdminScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
   id: '/services/',
   path: '/services/',
@@ -95,11 +119,15 @@ const AuthenticatedAccountServicesRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
+  '/admin/customers': typeof AdminCustomersRoute
+  '/admin/requests': typeof AdminRequestsRoute
+  '/admin/schedule': typeof AdminScheduleRoute
   '/services/$service': typeof ServicesServiceRoute
+  '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/account/payments': typeof AuthenticatedAccountPaymentsRoute
@@ -109,11 +137,14 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
+  '/admin/customers': typeof AdminCustomersRoute
+  '/admin/requests': typeof AdminRequestsRoute
+  '/admin/schedule': typeof AdminScheduleRoute
   '/services/$service': typeof ServicesServiceRoute
+  '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
   '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/account/payments': typeof AuthenticatedAccountPaymentsRoute
@@ -125,11 +156,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
+  '/admin/customers': typeof AdminCustomersRoute
+  '/admin/requests': typeof AdminRequestsRoute
+  '/admin/schedule': typeof AdminScheduleRoute
   '/services/$service': typeof ServicesServiceRoute
+  '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/_authenticated/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/_authenticated/account/payments': typeof AuthenticatedAccountPaymentsRoute
@@ -145,7 +180,11 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
+    | '/admin/customers'
+    | '/admin/requests'
+    | '/admin/schedule'
     | '/services/$service'
+    | '/admin/'
     | '/services/'
     | '/account/home-care'
     | '/account/payments'
@@ -155,11 +194,14 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/admin'
     | '/book'
     | '/login'
     | '/ongoing-care'
+    | '/admin/customers'
+    | '/admin/requests'
+    | '/admin/schedule'
     | '/services/$service'
+    | '/admin'
     | '/services'
     | '/account/home-care'
     | '/account/payments'
@@ -174,7 +216,11 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
+    | '/admin/customers'
+    | '/admin/requests'
+    | '/admin/schedule'
     | '/services/$service'
+    | '/admin/'
     | '/services/'
     | '/_authenticated/account/home-care'
     | '/_authenticated/account/payments'
@@ -186,7 +232,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   BookRoute: typeof BookRoute
   LoginRoute: typeof LoginRoute
   OngoingCareRoute: typeof OngoingCareRoute
@@ -244,6 +290,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/ongoing-care'
       preLoaderRoute: typeof OngoingCareRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/customers': {
+      id: '/admin/customers'
+      path: '/customers'
+      fullPath: '/admin/customers'
+      preLoaderRoute: typeof AdminCustomersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/requests': {
+      id: '/admin/requests'
+      path: '/requests'
+      fullPath: '/admin/requests'
+      preLoaderRoute: typeof AdminRequestsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/schedule': {
+      id: '/admin/schedule'
+      path: '/schedule'
+      fullPath: '/admin/schedule'
+      preLoaderRoute: typeof AdminScheduleRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/services/': {
       id: '/services/'
@@ -307,11 +381,27 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface AdminRouteChildren {
+  AdminCustomersRoute: typeof AdminCustomersRoute
+  AdminRequestsRoute: typeof AdminRequestsRoute
+  AdminScheduleRoute: typeof AdminScheduleRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminCustomersRoute: AdminCustomersRoute,
+  AdminRequestsRoute: AdminRequestsRoute,
+  AdminScheduleRoute: AdminScheduleRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   BookRoute: BookRoute,
   LoginRoute: LoginRoute,
   OngoingCareRoute: OngoingCareRoute,
