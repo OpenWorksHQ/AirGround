@@ -49,7 +49,7 @@ export function SiteHeader() {
   const { user } = useAuth();
   const { data: home } = useHomeRoute();
   const homeTo = home ?? "/account";
-  const homeLabel = home === "/admin" ? "Dashboard" : home === "/provider" ? "My Provider Page" : "My Home";
+  const homeLabel = home === "/admin" ? "Dashboard" : home === "/provider" ? "Provider Dashboard" : "My Home";
   const navigate = useNavigate();
 
   const signOut = async () => {
