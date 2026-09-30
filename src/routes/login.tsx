@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AMark, Logo } from "@/components/brand";
 import { Button, Field, inputStyles } from "@/components/ag";
 import { useAuth } from "@/hooks/use-auth";
+import { resolveHomeRoute } from "@/hooks/use-home-route";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/login")({
 });
 
 const safePath = (value: string | undefined) =>
-  value && value.startsWith("/") && !value.startsWith("//") ? value : "/account";
+  value && value.startsWith("/") && !value.startsWith("//") ? value : null;
 
 function LoginPage() {
   const { redirect } = Route.useSearch();
@@ -38,11 +39,20 @@ function LoginPage() {
   const [busy, setBusy] = useState(false);
   const [checkEmail, setCheckEmail] = useState(false);
 
-  const target = safePath(redirect);
+  const explicit = safePath(redirect);
+  const target = explicit ?? "/account";
 
+  // With no explicit destination, send people where their role belongs.
   useEffect(() => {
-    if (user) navigate({ to: target, replace: true });
-  }, [user, target, navigate]);
+    if (!user) return;
+    if (explicit) {
+      navigate({ to: explicit, replace: true });
+      return;
+    }
+    resolveHomeRoute(user.id)
+      .then((to) => navigate({ to, replace: true }))
+      .catch(() => navigate({ to: "/account", replace: true }));
+  }, [user, explicit, navigate]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +61,6 @@ function LoginPage() {
       if (mode === "signin") {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: target, replace: true });
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -63,7 +72,7 @@ function LoginPage() {
         });
         if (error) throw error;
         if (!data.session) setCheckEmail(true);
-        else navigate({ to: target, replace: true });
+
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "That didn't work. Try again.");
@@ -81,7 +90,6 @@ function LoginPage() {
       return;
     }
     if (result.redirected) return;
-    navigate({ to: target, replace: true });
   };
 
   return (
