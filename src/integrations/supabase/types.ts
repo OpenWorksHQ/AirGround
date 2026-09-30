@@ -14,16 +14,436 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      area_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          state_code: string | null
+          zip: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          state_code?: string | null
+          zip: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          state_code?: string | null
+          zip?: string
+        }
+        Relationships: []
+      }
+      care_plan_items: {
+        Row: {
+          care_plan_id: string
+          created_at: string
+          frequency: Database["public"]["Enums"]["care_frequency"]
+          frequency_note: string | null
+          id: string
+          next_service_date: string | null
+          paused: boolean
+          service_id: string | null
+          service_name: string
+          updated_at: string
+        }
+        Insert: {
+          care_plan_id: string
+          created_at?: string
+          frequency?: Database["public"]["Enums"]["care_frequency"]
+          frequency_note?: string | null
+          id?: string
+          next_service_date?: string | null
+          paused?: boolean
+          service_id?: string | null
+          service_name: string
+          updated_at?: string
+        }
+        Update: {
+          care_plan_id?: string
+          created_at?: string
+          frequency?: Database["public"]["Enums"]["care_frequency"]
+          frequency_note?: string | null
+          id?: string
+          next_service_date?: string | null
+          paused?: boolean
+          service_id?: string | null
+          service_name?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_plan_items_care_plan_id_fkey"
+            columns: ["care_plan_id"]
+            isOneToOne: false
+            referencedRelation: "care_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "care_plan_items_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      care_plans: {
+        Row: {
+          created_at: string
+          id: string
+          property_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          property_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          property_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "care_plans_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      properties: {
+        Row: {
+          access_notes: string | null
+          address_line1: string
+          city: string | null
+          created_at: string
+          id: string
+          label: string | null
+          lot_size: string | null
+          state_code: string
+          updated_at: string
+          user_id: string
+          zip: string
+        }
+        Insert: {
+          access_notes?: string | null
+          address_line1: string
+          city?: string | null
+          created_at?: string
+          id?: string
+          label?: string | null
+          lot_size?: string | null
+          state_code?: string
+          updated_at?: string
+          user_id: string
+          zip: string
+        }
+        Update: {
+          access_notes?: string | null
+          address_line1?: string
+          city?: string | null
+          created_at?: string
+          id?: string
+          label?: string | null
+          lot_size?: string | null
+          state_code?: string
+          updated_at?: string
+          user_id?: string
+          zip?: string
+        }
+        Relationships: []
+      }
+      service_areas: {
+        Row: {
+          active: boolean
+          cities: string[]
+          created_at: string
+          id: string
+          name: string
+          state_code: string
+          updated_at: string
+          zip_codes: string[]
+        }
+        Insert: {
+          active?: boolean
+          cities?: string[]
+          created_at?: string
+          id?: string
+          name: string
+          state_code: string
+          updated_at?: string
+          zip_codes?: string[]
+        }
+        Update: {
+          active?: boolean
+          cities?: string[]
+          created_at?: string
+          id?: string
+          name?: string
+          state_code?: string
+          updated_at?: string
+          zip_codes?: string[]
+        }
+        Relationships: []
+      }
+      service_categories: {
+        Row: {
+          active: boolean
+          blurb: string
+          created_at: string
+          icon: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          blurb?: string
+          created_at?: string
+          icon?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          blurb?: string
+          created_at?: string
+          icon?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      service_requests: {
+        Row: {
+          care_plan_id: string | null
+          category_slug: string | null
+          created_at: string
+          description: string | null
+          estimate_note: string | null
+          id: string
+          property_id: string | null
+          request_number: string
+          requested_date: string | null
+          service_id: string | null
+          service_name: string
+          status: Database["public"]["Enums"]["request_status"]
+          time_window: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          care_plan_id?: string | null
+          category_slug?: string | null
+          created_at?: string
+          description?: string | null
+          estimate_note?: string | null
+          id?: string
+          property_id?: string | null
+          request_number?: string
+          requested_date?: string | null
+          service_id?: string | null
+          service_name: string
+          status?: Database["public"]["Enums"]["request_status"]
+          time_window?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          care_plan_id?: string | null
+          category_slug?: string | null
+          created_at?: string
+          description?: string | null
+          estimate_note?: string | null
+          id?: string
+          property_id?: string | null
+          request_number?: string
+          requested_date?: string | null
+          service_id?: string | null
+          service_name?: string
+          status?: Database["public"]["Enums"]["request_status"]
+          time_window?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_requests_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_requests_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services: {
+        Row: {
+          active: boolean
+          category_slug: string
+          created_at: string
+          default_frequency:
+            | Database["public"]["Enums"]["care_frequency"]
+            | null
+          id: string
+          included: string[]
+          name: string
+          price_from: number | null
+          recurring_allowed: boolean
+          slug: string
+          sort_order: number
+          summary: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category_slug: string
+          created_at?: string
+          default_frequency?:
+            | Database["public"]["Enums"]["care_frequency"]
+            | null
+          id?: string
+          included?: string[]
+          name: string
+          price_from?: number | null
+          recurring_allowed?: boolean
+          slug: string
+          sort_order?: number
+          summary?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category_slug?: string
+          created_at?: string
+          default_frequency?:
+            | Database["public"]["Enums"]["care_frequency"]
+            | null
+          id?: string
+          included?: string[]
+          name?: string
+          price_from?: number | null
+          recurring_allowed?: boolean
+          slug?: string
+          sort_order?: number
+          summary?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_category_slug_fkey"
+            columns: ["category_slug"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "staff" | "customer"
+      care_frequency:
+        | "weekly"
+        | "biweekly"
+        | "monthly"
+        | "seasonally"
+        | "twice_yearly"
+        | "yearly"
+        | "custom"
+      request_status:
+        | "requested"
+        | "confirmed"
+        | "scheduled"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +570,25 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "staff", "customer"],
+      care_frequency: [
+        "weekly",
+        "biweekly",
+        "monthly",
+        "seasonally",
+        "twice_yearly",
+        "yearly",
+        "custom",
+      ],
+      request_status: [
+        "requested",
+        "confirmed",
+        "scheduled",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
+    },
   },
 } as const
