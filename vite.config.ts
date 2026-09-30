@@ -14,5 +14,5 @@ export default defineConfig({
   },
   // On Vercel, build the Vercel output format (.vercel/output) instead of the
   // default Cloudflare target. Local and Lovable builds are unaffected.
-  nitro: process.env["VERCEL"] ? { preset: "vercel" } : undefined,
+  ...(process.env["VERCEL"] ? { nitro: { preset: "vercel" } } : {}),
 });
