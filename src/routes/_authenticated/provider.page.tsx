@@ -2,13 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 
 import { ProviderShare } from "@/components/provider-share";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+
+
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import type { Provider } from "@/lib/providers";
 
-export const Route = createFileRoute("/_authenticated/provider")({
+export const Route = createFileRoute("/_authenticated/provider/page")({
   head: () => ({
     meta: [
       { title: "My Provider Page — AIRGROUND" },
@@ -42,7 +42,7 @@ function ProviderDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader />
+      
       <main className="mx-auto max-w-[1000px] px-5 py-10 lg:px-10">
         <h1 className="display-xl text-[2.2rem]">My Provider Page</h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -68,7 +68,7 @@ function ProviderDashboard() {
           ) : null}
         </div>
       </main>
-      <SiteFooter />
+      
     </div>
   );
 }
