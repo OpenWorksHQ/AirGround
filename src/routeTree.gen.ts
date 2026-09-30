@@ -18,6 +18,8 @@ import { Route as OngoingCareRouteImport } from './routes/ongoing-care'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesServiceRouteImport } from './routes/services.$service'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
+import { Route as AuthenticatedAccountHomeCareRouteImport } from './routes/_authenticated/account.home-care'
+import { Route as AuthenticatedAccountPaymentsRouteImport } from './routes/_authenticated/account.payments'
 import { Route as AuthenticatedAccountServicesRouteImport } from './routes/_authenticated/account.services'
 
 const IndexRoute = IndexRouteImport.update({
@@ -65,6 +67,18 @@ const AuthenticatedAccountIndexRoute =
     path: '/account/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAccountHomeCareRoute =
+  AuthenticatedAccountHomeCareRouteImport.update({
+    id: '/account/home-care',
+    path: '/account/home-care',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAccountPaymentsRoute =
+  AuthenticatedAccountPaymentsRouteImport.update({
+    id: '/account/payments',
+    path: '/account/payments',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAccountServicesRoute =
   AuthenticatedAccountServicesRouteImport.update({
     id: '/account/services',
@@ -80,6 +94,8 @@ export interface FileRoutesByFullPath {
   '/ongoing-care': typeof OngoingCareRoute
   '/services/$service': typeof ServicesServiceRoute
   '/services/': typeof ServicesIndexRoute
+  '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
+  '/account/payments': typeof AuthenticatedAccountPaymentsRoute
   '/account/services': typeof AuthenticatedAccountServicesRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
 }
@@ -91,6 +107,8 @@ export interface FileRoutesByTo {
   '/ongoing-care': typeof OngoingCareRoute
   '/services/$service': typeof ServicesServiceRoute
   '/services': typeof ServicesIndexRoute
+  '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
+  '/account/payments': typeof AuthenticatedAccountPaymentsRoute
   '/account/services': typeof AuthenticatedAccountServicesRoute
   '/account': typeof AuthenticatedAccountIndexRoute
 }
@@ -104,6 +122,8 @@ export interface FileRoutesById {
   '/ongoing-care': typeof OngoingCareRoute
   '/services/$service': typeof ServicesServiceRoute
   '/services/': typeof ServicesIndexRoute
+  '/_authenticated/account/home-care': typeof AuthenticatedAccountHomeCareRoute
+  '/_authenticated/account/payments': typeof AuthenticatedAccountPaymentsRoute
   '/_authenticated/account/services': typeof AuthenticatedAccountServicesRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
 }
@@ -117,6 +137,8 @@ export interface FileRouteTypes {
     | '/ongoing-care'
     | '/services/$service'
     | '/services/'
+    | '/account/home-care'
+    | '/account/payments'
     | '/account/services'
     | '/account/'
   fileRoutesByTo: FileRoutesByTo
@@ -128,6 +150,8 @@ export interface FileRouteTypes {
     | '/ongoing-care'
     | '/services/$service'
     | '/services'
+    | '/account/home-care'
+    | '/account/payments'
     | '/account/services'
     | '/account'
   id:
@@ -140,6 +164,8 @@ export interface FileRouteTypes {
     | '/ongoing-care'
     | '/services/$service'
     | '/services/'
+    | '/_authenticated/account/home-care'
+    | '/_authenticated/account/payments'
     | '/_authenticated/account/services'
     | '/_authenticated/account/'
   fileRoutesById: FileRoutesById
@@ -220,6 +246,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/account/home-care': {
+      id: '/_authenticated/account/home-care'
+      path: '/account/home-care'
+      fullPath: '/account/home-care'
+      preLoaderRoute: typeof AuthenticatedAccountHomeCareRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/account/payments': {
+      id: '/_authenticated/account/payments'
+      path: '/account/payments'
+      fullPath: '/account/payments'
+      preLoaderRoute: typeof AuthenticatedAccountPaymentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/account/services': {
       id: '/_authenticated/account/services'
       path: '/account/services'
@@ -231,11 +271,15 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountHomeCareRoute: typeof AuthenticatedAccountHomeCareRoute
+  AuthenticatedAccountPaymentsRoute: typeof AuthenticatedAccountPaymentsRoute
   AuthenticatedAccountServicesRoute: typeof AuthenticatedAccountServicesRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountHomeCareRoute: AuthenticatedAccountHomeCareRoute,
+  AuthenticatedAccountPaymentsRoute: AuthenticatedAccountPaymentsRoute,
   AuthenticatedAccountServicesRoute: AuthenticatedAccountServicesRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
 }
