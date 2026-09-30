@@ -1,72 +1,67 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 
-import { ProviderShare } from "@/components/provider-share";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { useAuth } from "@/hooks/use-auth";
-import { supabase } from "@/integrations/supabase/client";
-import type { Provider } from "@/lib/providers";
+import { useProviderPortal } from "@/lib/provider-portal";
 
 export const Route = createFileRoute("/_authenticated/provider")({
   head: () => ({
     meta: [
-      { title: "My Provider Page — AIRGROUND" },
-      { name: "description", content: "View and share your AirGround provider booking page." },
+      { title: "Provider Dashboard — AIRGROUND" },
+      { name: "description", content: "Your private AirGround provider workspace." },
       { name: "robots", content: "noindex" },
-      { property: "og:title", content: "My Provider Page — AIRGROUND" },
-      { property: "og:description", content: "Share your AirGround booking link with your customers." },
+      { property: "og:title", content: "Provider Dashboard — AIRGROUND" },
+      { property: "og:description", content: "Jobs, schedule, ongoing care and earnings for AirGround providers." },
     ],
   }),
-  component: ProviderDashboard,
+  component: ProviderLayout,
 });
 
-function ProviderDashboard() {
-  const { user } = useAuth();
-  const { data, isLoading } = useQuery({
-    queryKey: ["my-providers", user?.id],
-    enabled: !!user,
-    queryFn: async () => {
-      const { data: members, error } = await supabase
-        .from("provider_members")
-        .select("provider_id")
-        .eq("user_id", user!.id);
-      if (error) throw error;
-      const ids = (members ?? []).map((m) => m.provider_id);
-      if (ids.length === 0) return [];
-      const { data: providers, error: e2 } = await supabase.from("providers").select("*").in("id", ids);
-      if (e2) throw e2;
-      return (providers ?? []) as Provider[];
-    },
-  });
+const TABS = [
+  { to: "/provider", label: "Dashboard", exact: true },
+  { to: "/provider/jobs", label: "Jobs / Requests", exact: false },
+  { to: "/provider/schedule", label: "Schedule", exact: false },
+  { to: "/provider/care", label: "Ongoing Care", exact: false },
+  { to: "/provider/earnings", label: "Earnings / Payouts", exact: false },
+  { to: "/provider/services", label: "My Services", exact: false },
+  { to: "/provider/page", label: "My Provider Page", exact: false },
+  { to: "/provider/account", label: "Account", exact: false },
+] as const;
+
+function ProviderLayout() {
+  const { data, isLoading } = useProviderPortal();
+  const name = data?.providers.map((p) => p.name).join(" · ");
 
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-      <main className="mx-auto max-w-[1000px] px-5 py-10 lg:px-10">
-        <h1 className="display-xl text-[2.2rem]">My Provider Page</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Send this link to your customers. They'll only see your services and prices.
-        </p>
-        <div className="mt-6 space-y-4">
-          {isLoading ? <p className="text-sm text-muted-foreground">Loading…</p> : null}
-          {(data ?? []).map((p) => (
-            <section key={p.id} className="rounded-2xl border border-border bg-card p-6">
-              <p className="text-sm font-bold">
-                {p.name}
-                {p.active ? "" : " · paused by AirGround"}
-              </p>
-              <div className="mt-4">
-                <ProviderShare slug={p.slug} name={p.name} />
-              </div>
-            </section>
-          ))}
-          {!isLoading && (data ?? []).length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Your account isn't linked to a provider page yet. Ask AirGround to add you.
-            </p>
-          ) : null}
+      <div className="border-b border-border bg-paper">
+        <div className="mx-auto max-w-[1200px] px-5 pt-5 lg:px-10">
+          <span className="eyebrow">Provider Dashboard{name ? ` · ${name}` : ""}</span>
         </div>
+        <nav className="mx-auto flex max-w-[1200px] gap-1 overflow-x-auto px-5 lg:px-10">
+          {TABS.map((t) => (
+            <Link
+              key={t.to}
+              to={t.to}
+              activeOptions={{ exact: t.exact }}
+              activeProps={{ className: "border-foreground text-foreground" }}
+              inactiveProps={{ className: "border-transparent text-muted-foreground" }}
+              className="whitespace-nowrap border-b-2 px-3 py-4 text-sm font-semibold hover:text-foreground"
+            >
+              {t.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+      <main className="mx-auto max-w-[1200px] px-5 py-10 lg:px-10">
+        {!isLoading && data && data.providers.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            Your account isn't linked to a provider yet. Ask AirGround to add you.
+          </p>
+        ) : (
+          <Outlet />
+        )}
       </main>
       <SiteFooter />
     </div>

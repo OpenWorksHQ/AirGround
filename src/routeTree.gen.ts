@@ -31,6 +31,14 @@ import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedAccountHomeCareRouteImport } from './routes/_authenticated/account.home-care'
 import { Route as AuthenticatedAccountPaymentsRouteImport } from './routes/_authenticated/account.payments'
 import { Route as AuthenticatedAccountServicesRouteImport } from './routes/_authenticated/account.services'
+import { Route as AuthenticatedProviderIndexRouteImport } from './routes/_authenticated/provider.index'
+import { Route as AuthenticatedProviderAccountRouteImport } from './routes/_authenticated/provider.account'
+import { Route as AuthenticatedProviderCareRouteImport } from './routes/_authenticated/provider.care'
+import { Route as AuthenticatedProviderEarningsRouteImport } from './routes/_authenticated/provider.earnings'
+import { Route as AuthenticatedProviderJobsRouteImport } from './routes/_authenticated/provider.jobs'
+import { Route as AuthenticatedProviderPageRouteImport } from './routes/_authenticated/provider.page'
+import { Route as AuthenticatedProviderScheduleRouteImport } from './routes/_authenticated/provider.schedule'
+import { Route as AuthenticatedProviderServicesRouteImport } from './routes/_authenticated/provider.services'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -145,6 +153,54 @@ const AuthenticatedAccountServicesRoute =
     path: '/account/services',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedProviderIndexRoute =
+  AuthenticatedProviderIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedProviderRoute,
+  } as any)
+const AuthenticatedProviderAccountRoute =
+  AuthenticatedProviderAccountRouteImport.update({
+    id: '/account',
+    path: '/account',
+    getParentRoute: () => AuthenticatedProviderRoute,
+  } as any)
+const AuthenticatedProviderCareRoute =
+  AuthenticatedProviderCareRouteImport.update({
+    id: '/care',
+    path: '/care',
+    getParentRoute: () => AuthenticatedProviderRoute,
+  } as any)
+const AuthenticatedProviderEarningsRoute =
+  AuthenticatedProviderEarningsRouteImport.update({
+    id: '/earnings',
+    path: '/earnings',
+    getParentRoute: () => AuthenticatedProviderRoute,
+  } as any)
+const AuthenticatedProviderJobsRoute =
+  AuthenticatedProviderJobsRouteImport.update({
+    id: '/jobs',
+    path: '/jobs',
+    getParentRoute: () => AuthenticatedProviderRoute,
+  } as any)
+const AuthenticatedProviderPageRoute =
+  AuthenticatedProviderPageRouteImport.update({
+    id: '/page',
+    path: '/page',
+    getParentRoute: () => AuthenticatedProviderRoute,
+  } as any)
+const AuthenticatedProviderScheduleRoute =
+  AuthenticatedProviderScheduleRouteImport.update({
+    id: '/schedule',
+    path: '/schedule',
+    getParentRoute: () => AuthenticatedProviderRoute,
+  } as any)
+const AuthenticatedProviderServicesRoute =
+  AuthenticatedProviderServicesRouteImport.update({
+    id: '/services',
+    path: '/services',
+    getParentRoute: () => AuthenticatedProviderRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -153,7 +209,7 @@ export interface FileRoutesByFullPath {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
-  '/provider': typeof AuthenticatedProviderRoute
+  '/provider': typeof AuthenticatedProviderRouteWithChildren
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -167,7 +223,15 @@ export interface FileRoutesByFullPath {
   '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/account/payments': typeof AuthenticatedAccountPaymentsRoute
   '/account/services': typeof AuthenticatedAccountServicesRoute
+  '/provider/account': typeof AuthenticatedProviderAccountRoute
+  '/provider/care': typeof AuthenticatedProviderCareRoute
+  '/provider/earnings': typeof AuthenticatedProviderEarningsRoute
+  '/provider/jobs': typeof AuthenticatedProviderJobsRoute
+  '/provider/page': typeof AuthenticatedProviderPageRoute
+  '/provider/schedule': typeof AuthenticatedProviderScheduleRoute
+  '/provider/services': typeof AuthenticatedProviderServicesRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
+  '/provider/': typeof AuthenticatedProviderIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -175,7 +239,6 @@ export interface FileRoutesByTo {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
-  '/provider': typeof AuthenticatedProviderRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -189,7 +252,15 @@ export interface FileRoutesByTo {
   '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/account/payments': typeof AuthenticatedAccountPaymentsRoute
   '/account/services': typeof AuthenticatedAccountServicesRoute
+  '/provider/account': typeof AuthenticatedProviderAccountRoute
+  '/provider/care': typeof AuthenticatedProviderCareRoute
+  '/provider/earnings': typeof AuthenticatedProviderEarningsRoute
+  '/provider/jobs': typeof AuthenticatedProviderJobsRoute
+  '/provider/page': typeof AuthenticatedProviderPageRoute
+  '/provider/schedule': typeof AuthenticatedProviderScheduleRoute
+  '/provider/services': typeof AuthenticatedProviderServicesRoute
   '/account': typeof AuthenticatedAccountIndexRoute
+  '/provider': typeof AuthenticatedProviderIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -200,7 +271,7 @@ export interface FileRoutesById {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
-  '/_authenticated/provider': typeof AuthenticatedProviderRoute
+  '/_authenticated/provider': typeof AuthenticatedProviderRouteWithChildren
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -214,7 +285,15 @@ export interface FileRoutesById {
   '/_authenticated/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/_authenticated/account/payments': typeof AuthenticatedAccountPaymentsRoute
   '/_authenticated/account/services': typeof AuthenticatedAccountServicesRoute
+  '/_authenticated/provider/account': typeof AuthenticatedProviderAccountRoute
+  '/_authenticated/provider/care': typeof AuthenticatedProviderCareRoute
+  '/_authenticated/provider/earnings': typeof AuthenticatedProviderEarningsRoute
+  '/_authenticated/provider/jobs': typeof AuthenticatedProviderJobsRoute
+  '/_authenticated/provider/page': typeof AuthenticatedProviderPageRoute
+  '/_authenticated/provider/schedule': typeof AuthenticatedProviderScheduleRoute
+  '/_authenticated/provider/services': typeof AuthenticatedProviderServicesRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
+  '/_authenticated/provider/': typeof AuthenticatedProviderIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -239,7 +318,15 @@ export interface FileRouteTypes {
     | '/account/home-care'
     | '/account/payments'
     | '/account/services'
+    | '/provider/account'
+    | '/provider/care'
+    | '/provider/earnings'
+    | '/provider/jobs'
+    | '/provider/page'
+    | '/provider/schedule'
+    | '/provider/services'
     | '/account/'
+    | '/provider/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -247,7 +334,6 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
-    | '/provider'
     | '/admin/customers'
     | '/admin/providers'
     | '/admin/requests'
@@ -261,7 +347,15 @@ export interface FileRouteTypes {
     | '/account/home-care'
     | '/account/payments'
     | '/account/services'
+    | '/provider/account'
+    | '/provider/care'
+    | '/provider/earnings'
+    | '/provider/jobs'
+    | '/provider/page'
+    | '/provider/schedule'
+    | '/provider/services'
     | '/account'
+    | '/provider'
   id:
     | '__root__'
     | '/'
@@ -285,7 +379,15 @@ export interface FileRouteTypes {
     | '/_authenticated/account/home-care'
     | '/_authenticated/account/payments'
     | '/_authenticated/account/services'
+    | '/_authenticated/provider/account'
+    | '/_authenticated/provider/care'
+    | '/_authenticated/provider/earnings'
+    | '/_authenticated/provider/jobs'
+    | '/_authenticated/provider/page'
+    | '/_authenticated/provider/schedule'
+    | '/_authenticated/provider/services'
     | '/_authenticated/account/'
+    | '/_authenticated/provider/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -457,11 +559,94 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountServicesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/provider/': {
+      id: '/_authenticated/provider/'
+      path: '/'
+      fullPath: '/provider/'
+      preLoaderRoute: typeof AuthenticatedProviderIndexRouteImport
+      parentRoute: typeof AuthenticatedProviderRoute
+    }
+    '/_authenticated/provider/account': {
+      id: '/_authenticated/provider/account'
+      path: '/account'
+      fullPath: '/provider/account'
+      preLoaderRoute: typeof AuthenticatedProviderAccountRouteImport
+      parentRoute: typeof AuthenticatedProviderRoute
+    }
+    '/_authenticated/provider/care': {
+      id: '/_authenticated/provider/care'
+      path: '/care'
+      fullPath: '/provider/care'
+      preLoaderRoute: typeof AuthenticatedProviderCareRouteImport
+      parentRoute: typeof AuthenticatedProviderRoute
+    }
+    '/_authenticated/provider/earnings': {
+      id: '/_authenticated/provider/earnings'
+      path: '/earnings'
+      fullPath: '/provider/earnings'
+      preLoaderRoute: typeof AuthenticatedProviderEarningsRouteImport
+      parentRoute: typeof AuthenticatedProviderRoute
+    }
+    '/_authenticated/provider/jobs': {
+      id: '/_authenticated/provider/jobs'
+      path: '/jobs'
+      fullPath: '/provider/jobs'
+      preLoaderRoute: typeof AuthenticatedProviderJobsRouteImport
+      parentRoute: typeof AuthenticatedProviderRoute
+    }
+    '/_authenticated/provider/page': {
+      id: '/_authenticated/provider/page'
+      path: '/page'
+      fullPath: '/provider/page'
+      preLoaderRoute: typeof AuthenticatedProviderPageRouteImport
+      parentRoute: typeof AuthenticatedProviderRoute
+    }
+    '/_authenticated/provider/schedule': {
+      id: '/_authenticated/provider/schedule'
+      path: '/schedule'
+      fullPath: '/provider/schedule'
+      preLoaderRoute: typeof AuthenticatedProviderScheduleRouteImport
+      parentRoute: typeof AuthenticatedProviderRoute
+    }
+    '/_authenticated/provider/services': {
+      id: '/_authenticated/provider/services'
+      path: '/services'
+      fullPath: '/provider/services'
+      preLoaderRoute: typeof AuthenticatedProviderServicesRouteImport
+      parentRoute: typeof AuthenticatedProviderRoute
+    }
   }
 }
 
+interface AuthenticatedProviderRouteChildren {
+  AuthenticatedProviderAccountRoute: typeof AuthenticatedProviderAccountRoute
+  AuthenticatedProviderCareRoute: typeof AuthenticatedProviderCareRoute
+  AuthenticatedProviderEarningsRoute: typeof AuthenticatedProviderEarningsRoute
+  AuthenticatedProviderJobsRoute: typeof AuthenticatedProviderJobsRoute
+  AuthenticatedProviderPageRoute: typeof AuthenticatedProviderPageRoute
+  AuthenticatedProviderScheduleRoute: typeof AuthenticatedProviderScheduleRoute
+  AuthenticatedProviderServicesRoute: typeof AuthenticatedProviderServicesRoute
+  AuthenticatedProviderIndexRoute: typeof AuthenticatedProviderIndexRoute
+}
+
+const AuthenticatedProviderRouteChildren: AuthenticatedProviderRouteChildren = {
+  AuthenticatedProviderAccountRoute: AuthenticatedProviderAccountRoute,
+  AuthenticatedProviderCareRoute: AuthenticatedProviderCareRoute,
+  AuthenticatedProviderEarningsRoute: AuthenticatedProviderEarningsRoute,
+  AuthenticatedProviderJobsRoute: AuthenticatedProviderJobsRoute,
+  AuthenticatedProviderPageRoute: AuthenticatedProviderPageRoute,
+  AuthenticatedProviderScheduleRoute: AuthenticatedProviderScheduleRoute,
+  AuthenticatedProviderServicesRoute: AuthenticatedProviderServicesRoute,
+  AuthenticatedProviderIndexRoute: AuthenticatedProviderIndexRoute,
+}
+
+const AuthenticatedProviderRouteWithChildren =
+  AuthenticatedProviderRoute._addFileChildren(
+    AuthenticatedProviderRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedProviderRoute: typeof AuthenticatedProviderRoute
+  AuthenticatedProviderRoute: typeof AuthenticatedProviderRouteWithChildren
   AuthenticatedAccountHomeCareRoute: typeof AuthenticatedAccountHomeCareRoute
   AuthenticatedAccountPaymentsRoute: typeof AuthenticatedAccountPaymentsRoute
   AuthenticatedAccountServicesRoute: typeof AuthenticatedAccountServicesRoute
@@ -469,7 +654,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedProviderRoute: AuthenticatedProviderRoute,
+  AuthenticatedProviderRoute: AuthenticatedProviderRouteWithChildren,
   AuthenticatedAccountHomeCareRoute: AuthenticatedAccountHomeCareRoute,
   AuthenticatedAccountPaymentsRoute: AuthenticatedAccountPaymentsRoute,
   AuthenticatedAccountServicesRoute: AuthenticatedAccountServicesRoute,
