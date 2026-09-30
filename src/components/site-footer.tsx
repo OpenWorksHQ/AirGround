@@ -19,6 +19,9 @@ export function SiteFooter() {
           <Link to="/ongoing-care" className="hover:text-foreground">
             Ongoing Care
           </Link>
+          <Link to="/providers" className="hover:text-foreground">
+            Find a Provider
+          </Link>
           <Link to="/book" search={{ mode: "once" }} className="hover:text-foreground">
             Book a service
           </Link>
