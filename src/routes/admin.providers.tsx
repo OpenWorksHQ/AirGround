@@ -63,6 +63,159 @@ function useBookingCounts() {
   });
 }
 
+type ProviderApplication = {
+  id: string;
+  user_id: string | null;
+  full_name: string;
+  business_name: string | null;
+  email: string;
+  phone: string;
+  primary_trade: string;
+  additional_services: string | null;
+  city: string;
+  state_code: string;
+  service_area: string;
+  license_info: string | null;
+  status: string;
+  provider_id: string | null;
+  created_at: string;
+};
+
+function AdminApplications() {
+  const queryClient = useQueryClient();
+  const [openId, setOpenId] = useState<string | null>(null);
+  const { data: applications } = useQuery({
+    queryKey: ["admin-provider-applications"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("provider_applications")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as ProviderApplication[];
+    },
+  });
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["admin-provider-applications"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-providers"] });
+  };
+
+  const review = async (app: ProviderApplication, decision: "approved" | "rejected") => {
+    if (decision === "approved") {
+      const name = app.business_name?.trim() || app.full_name.trim();
+      const { data: provider, error } = await supabase
+        .from("providers")
+        .insert({
+          name,
+          slug: slugify(name) || `provider-${Date.now()}`,
+          description: `${app.primary_trade} serving ${app.service_area}`,
+          contact_email: app.email,
+          contact_phone: app.phone,
+          service_area: app.service_area,
+          active: true,
+          directory_visible: false,
+        })
+        .select("id")
+        .single();
+      if (error) {
+        toast.error(error.code === "23505" ? "That page link is already taken." : "Couldn't create the provider.");
+        return;
+      }
+      if (app.user_id) {
+        const { error: memberError } = await supabase
+          .from("provider_members")
+          .insert({ provider_id: provider.id, user_id: app.user_id });
+        if (memberError) toast.error("Provider created, but the account couldn't be linked to the team.");
+      }
+      const { error: updateError } = await supabase
+        .from("provider_applications")
+        .update({ status: "approved", provider_id: provider.id })
+        .eq("id", app.id);
+      if (updateError) toast.error("Couldn't update the application status.");
+      toast.success("Provider approved. Set services, prices and directory visibility below.");
+    } else {
+      const { error } = await supabase
+        .from("provider_applications")
+        .update({ status: "rejected" })
+        .eq("id", app.id);
+      if (error) {
+        toast.error("Couldn't update the application.");
+        return;
+      }
+      toast.success("Application rejected.");
+    }
+    refresh();
+  };
+
+  const pending = (applications ?? []).filter((a) => a.status === "pending_review");
+
+  return (
+    <div className="mt-8">
+      <div className="flex items-center justify-between">
+        <span className="eyebrow">Provider applications</span>
+        <span className="text-xs text-muted-foreground">
+          {pending.length > 0 ? `${pending.length} pending review` : "None pending"}
+        </span>
+      </div>
+      <div className="mt-2 divide-y divide-border rounded-2xl border border-border bg-card">
+        {(applications ?? []).length === 0 ? (
+          <p className="px-6 py-5 text-sm text-muted-foreground">No applications yet.</p>
+        ) : null}
+        {(applications ?? []).map((a) => (
+          <div key={a.id} className="px-6 py-4">
+            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+              <button className="min-w-0 text-left" onClick={() => setOpenId(openId === a.id ? null : a.id)}>
+                <p className="truncate text-sm font-bold">
+                  {a.business_name?.trim() || a.full_name}
+                  <span className="ml-2 font-medium text-muted-foreground">{a.primary_trade}</span>
+                </p>
+                <p className="mt-1 truncate text-xs text-muted-foreground">
+                  {a.city}, {a.state_code} · {a.email} ·{" "}
+                  {a.status === "pending_review" ? "Pending review" : a.status === "approved" ? "Approved" : "Rejected"}
+                </p>
+              </button>
+              {a.status === "pending_review" ? (
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={() => review(a, "approved")}>
+                    Approve
+                  </Button>
+                  <Button size="sm" variant="quiet" onClick={() => review(a, "rejected")}>
+                    Reject
+                  </Button>
+                </div>
+              ) : null}
+            </div>
+            {openId === a.id ? (
+              <dl className="mt-4 grid gap-x-8 gap-y-3 rounded-xl bg-paper p-5 text-sm sm:grid-cols-2">
+                <div>
+                  <dt className="eyebrow">Contact</dt>
+                  <dd className="mt-1">{a.full_name} · {a.phone}</dd>
+                </div>
+                <div>
+                  <dt className="eyebrow">Location</dt>
+                  <dd className="mt-1">{a.city}, {a.state_code}</dd>
+                </div>
+                <div>
+                  <dt className="eyebrow">Service area</dt>
+                  <dd className="mt-1">{a.service_area}</dd>
+                </div>
+                <div>
+                  <dt className="eyebrow">Additional services</dt>
+                  <dd className="mt-1">{a.additional_services ?? "—"}</dd>
+                </div>
+                <div className="sm:col-span-2">
+                  <dt className="eyebrow">License / certification</dt>
+                  <dd className="mt-1">{a.license_info ?? "—"}</dd>
+                </div>
+              </dl>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function AdminProviders() {
   const queryClient = useQueryClient();
   const { data: providers } = useAllProviders();

@@ -16,6 +16,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OngoingCareRouteImport } from './routes/ongoing-care'
+import { Route as ProvidersRouteImport } from './routes/providers'
 import { Route as AuthenticatedProviderRouteImport } from './routes/_authenticated/provider'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
@@ -25,6 +26,7 @@ import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminServiceAreasRouteImport } from './routes/admin.service-areas'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
+import { Route as ProvidersApplyRouteImport } from './routes/providers.apply'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesServiceRouteImport } from './routes/services.$service'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
@@ -74,6 +76,11 @@ const OngoingCareRoute = OngoingCareRouteImport.update({
   path: '/ongoing-care',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProvidersRoute = ProvidersRouteImport.update({
+  id: '/providers',
+  path: '/providers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedProviderRoute = AuthenticatedProviderRouteImport.update({
   id: '/provider',
   path: '/provider',
@@ -118,6 +125,11 @@ const PSlugRoute = PSlugRouteImport.update({
   id: '/p/$slug',
   path: '/p/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ProvidersApplyRoute = ProvidersApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
+  getParentRoute: () => ProvidersRoute,
 } as any)
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
   id: '/services/',
@@ -209,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
+  '/providers': typeof ProvidersRouteWithChildren
   '/provider': typeof AuthenticatedProviderRouteWithChildren
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
@@ -217,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
   '/p/$slug': typeof PSlugRoute
+  '/providers/apply': typeof ProvidersApplyRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -239,6 +253,7 @@ export interface FileRoutesByTo {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
+  '/providers': typeof ProvidersRouteWithChildren
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -246,6 +261,7 @@ export interface FileRoutesByTo {
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
   '/p/$slug': typeof PSlugRoute
+  '/providers/apply': typeof ProvidersApplyRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
@@ -271,6 +287,7 @@ export interface FileRoutesById {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
+  '/providers': typeof ProvidersRouteWithChildren
   '/_authenticated/provider': typeof AuthenticatedProviderRouteWithChildren
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
@@ -279,6 +296,7 @@ export interface FileRoutesById {
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
   '/p/$slug': typeof PSlugRoute
+  '/providers/apply': typeof ProvidersApplyRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -304,6 +322,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
+    | '/providers'
     | '/provider'
     | '/admin/customers'
     | '/admin/providers'
@@ -312,6 +331,7 @@ export interface FileRouteTypes {
     | '/admin/service-areas'
     | '/admin/services'
     | '/p/$slug'
+    | '/providers/apply'
     | '/services/$service'
     | '/admin/'
     | '/services/'
@@ -334,6 +354,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
+    | '/providers'
     | '/admin/customers'
     | '/admin/providers'
     | '/admin/requests'
@@ -341,6 +362,7 @@ export interface FileRouteTypes {
     | '/admin/service-areas'
     | '/admin/services'
     | '/p/$slug'
+    | '/providers/apply'
     | '/services/$service'
     | '/admin'
     | '/services'
@@ -365,6 +387,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
+    | '/providers'
     | '/_authenticated/provider'
     | '/admin/customers'
     | '/admin/providers'
@@ -373,6 +396,7 @@ export interface FileRouteTypes {
     | '/admin/service-areas'
     | '/admin/services'
     | '/p/$slug'
+    | '/providers/apply'
     | '/services/$service'
     | '/admin/'
     | '/services/'
@@ -398,6 +422,7 @@ export interface RootRouteChildren {
   BookRoute: typeof BookRoute
   LoginRoute: typeof LoginRoute
   OngoingCareRoute: typeof OngoingCareRoute
+  ProvidersRoute: typeof ProvidersRouteWithChildren
   PSlugRoute: typeof PSlugRoute
   ServicesServiceRoute: typeof ServicesServiceRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
@@ -452,6 +477,13 @@ declare module '@tanstack/react-router' {
       path: '/ongoing-care'
       fullPath: '/ongoing-care'
       preLoaderRoute: typeof OngoingCareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/providers': {
+      id: '/providers'
+      path: '/providers'
+      fullPath: '/providers'
+      preLoaderRoute: typeof ProvidersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/provider': {
@@ -516,6 +548,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/p/$slug'
       preLoaderRoute: typeof PSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/providers/apply': {
+      id: '/providers/apply'
+      path: '/apply'
+      fullPath: '/providers/apply'
+      preLoaderRoute: typeof ProvidersApplyRouteImport
+      parentRoute: typeof ProvidersRoute
     }
     '/services/': {
       id: '/services/'
@@ -686,6 +725,18 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface ProvidersRouteChildren {
+  ProvidersApplyRoute: typeof ProvidersApplyRoute
+}
+
+const ProvidersRouteChildren: ProvidersRouteChildren = {
+  ProvidersApplyRoute: ProvidersApplyRoute,
+}
+
+const ProvidersRouteWithChildren = ProvidersRoute._addFileChildren(
+  ProvidersRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
@@ -694,6 +745,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookRoute: BookRoute,
   LoginRoute: LoginRoute,
   OngoingCareRoute: OngoingCareRoute,
+  ProvidersRoute: ProvidersRouteWithChildren,
   PSlugRoute: PSlugRoute,
   ServicesServiceRoute: ServicesServiceRoute,
   ServicesIndexRoute: ServicesIndexRoute,
