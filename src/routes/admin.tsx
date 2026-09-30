@@ -30,6 +30,7 @@ const TABS = [
   { to: "/admin/customers", label: "Customers", exact: false },
   { to: "/admin/services", label: "Services & Pricing", exact: false },
   { to: "/admin/service-areas", label: "Service Areas", exact: false },
+  { to: "/admin/providers", label: "Providers", exact: false },
 ] as const;
 
 function AdminLayout() {
