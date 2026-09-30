@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button, Field, inputStyles } from "@/components/ag";
+import { ProviderShare } from "@/components/provider-share";
 import { supabase } from "@/integrations/supabase/client";
 import { FREQUENCIES, TIME_WINDOWS } from "@/lib/booking";
 import type { Service } from "@/lib/catalog";
@@ -188,6 +189,12 @@ function ProviderEditor({ provider }: { provider: Provider }) {
 
   return (
     <div className="mt-4 space-y-6 rounded-xl bg-paper p-5">
+      <div>
+        <span className="eyebrow">Share</span>
+        <div className="mt-2">
+          <ProviderShare slug={provider.slug} name={provider.name} />
+        </div>
+      </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <Field label="Name">
           <input className={inputStyles} value={form.name} onChange={(e) => set({ name: e.target.value })} />
@@ -260,6 +267,7 @@ function ProviderEditor({ provider }: { provider: Provider }) {
       </div>
 
       <ProviderServices providerId={provider.id} />
+      <ProviderTeam providerId={provider.id} />
     </div>
   );
 }
@@ -411,6 +419,85 @@ function ProviderServices({ providerId }: { providerId: string }) {
       <p className="mt-3 text-xs text-muted-foreground">
         Catalog names and descriptions are managed in <Link to="/admin/services" className="font-semibold underline">Services &amp; Pricing</Link>.
       </p>
+    </div>
+  );
+}
+
+function ProviderTeam({ providerId }: { providerId: string }) {
+  const queryClient = useQueryClient();
+  const [email, setEmail] = useState("");
+  const { data: members } = useQuery({
+    queryKey: ["admin-provider-members", providerId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("provider_members")
+        .select("id, user_id")
+        .eq("provider_id", providerId);
+      if (error) throw error;
+      const ids = (data ?? []).map((m) => m.user_id);
+      const { data: profiles } = ids.length
+        ? await supabase.from("profiles").select("id, full_name, email").in("id", ids)
+        : { data: [] };
+      return (data ?? []).map((m) => ({ ...m, profile: (profiles ?? []).find((p) => p.id === m.user_id) }));
+    },
+  });
+  const refresh = () => queryClient.invalidateQueries({ queryKey: ["admin-provider-members", providerId] });
+
+  const add = async () => {
+    const value = email.trim().toLowerCase();
+    if (!value) return;
+    const { data: profile } = await supabase.from("profiles").select("id").ilike("email", value).maybeSingle();
+    if (!profile) {
+      toast.error("No AirGround account uses that email yet — ask them to create one first.");
+      return;
+    }
+    const { error } = await supabase.from("provider_members").insert({ provider_id: providerId, user_id: profile.id });
+    if (error) {
+      toast.error(error.code === "23505" ? "Already on this team." : "Couldn't add team member.");
+      return;
+    }
+    setEmail("");
+    refresh();
+    toast.success("Team member added.");
+  };
+  const remove = async (id: string) => {
+    const { error } = await supabase.from("provider_members").delete().eq("id", id);
+    if (error) toast.error("Couldn't remove team member.");
+    refresh();
+  };
+
+  return (
+    <div>
+      <span className="eyebrow">Provider team</span>
+      <p className="mt-1 text-xs text-muted-foreground">
+        People added here see "My Provider Page" when they sign in. They can't change anything.
+      </p>
+      <div className="mt-2 divide-y divide-border rounded-xl border border-border bg-card">
+        {(members ?? []).map((m) => (
+          <div key={m.id} className="flex items-center justify-between gap-3 px-4 py-3">
+            <p className="truncate text-sm">
+              {m.profile?.full_name ?? "Account"} <span className="text-muted-foreground">{m.profile?.email}</span>
+            </p>
+            <Button size="sm" variant="quiet" onClick={() => remove(m.id)}>
+              Remove
+            </Button>
+          </div>
+        ))}
+        {(members ?? []).length === 0 ? (
+          <p className="px-4 py-3 text-sm text-muted-foreground">No team members yet.</p>
+        ) : null}
+      </div>
+      <div className="mt-3 flex gap-2">
+        <input
+          className={`${inputStyles} max-w-sm`}
+          type="email"
+          placeholder="Their account email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && add()}
+        />
+        <Button onClick={add}>Add</Button>
+      </div>
     </div>
   );
 }

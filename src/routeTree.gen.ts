@@ -16,6 +16,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OngoingCareRouteImport } from './routes/ongoing-care'
+import { Route as AuthenticatedProviderRouteImport } from './routes/_authenticated/provider'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
@@ -64,6 +65,11 @@ const OngoingCareRoute = OngoingCareRouteImport.update({
   id: '/ongoing-care',
   path: '/ongoing-care',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedProviderRoute = AuthenticatedProviderRouteImport.update({
+  id: '/provider',
+  path: '/provider',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -147,6 +153,7 @@ export interface FileRoutesByFullPath {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
+  '/provider': typeof AuthenticatedProviderRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
+  '/provider': typeof AuthenticatedProviderRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
+  '/_authenticated/provider': typeof AuthenticatedProviderRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -216,6 +225,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
+    | '/provider'
     | '/admin/customers'
     | '/admin/providers'
     | '/admin/requests'
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
+    | '/provider'
     | '/admin/customers'
     | '/admin/providers'
     | '/admin/requests'
@@ -260,6 +271,7 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
+    | '/_authenticated/provider'
     | '/admin/customers'
     | '/admin/providers'
     | '/admin/requests'
@@ -339,6 +351,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/ongoing-care'
       preLoaderRoute: typeof OngoingCareRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/provider': {
+      id: '/_authenticated/provider'
+      path: '/provider'
+      fullPath: '/provider'
+      preLoaderRoute: typeof AuthenticatedProviderRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -442,6 +461,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedProviderRoute: typeof AuthenticatedProviderRoute
   AuthenticatedAccountHomeCareRoute: typeof AuthenticatedAccountHomeCareRoute
   AuthenticatedAccountPaymentsRoute: typeof AuthenticatedAccountPaymentsRoute
   AuthenticatedAccountServicesRoute: typeof AuthenticatedAccountServicesRoute
@@ -449,6 +469,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedProviderRoute: AuthenticatedProviderRoute,
   AuthenticatedAccountHomeCareRoute: AuthenticatedAccountHomeCareRoute,
   AuthenticatedAccountPaymentsRoute: AuthenticatedAccountPaymentsRoute,
   AuthenticatedAccountServicesRoute: AuthenticatedAccountServicesRoute,
