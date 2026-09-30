@@ -18,10 +18,12 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as OngoingCareRouteImport } from './routes/ongoing-care'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
+import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
 import { Route as AdminRequestsRouteImport } from './routes/admin.requests'
 import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminServiceAreasRouteImport } from './routes/admin.service-areas'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
+import { Route as PSlugRouteImport } from './routes/p.$slug'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesServiceRouteImport } from './routes/services.$service'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
@@ -73,6 +75,11 @@ const AdminCustomersRoute = AdminCustomersRouteImport.update({
   path: '/customers',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminProvidersRoute = AdminProvidersRouteImport.update({
+  id: '/providers',
+  path: '/providers',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminRequestsRoute = AdminRequestsRouteImport.update({
   id: '/requests',
   path: '/requests',
@@ -92,6 +99,11 @@ const AdminServicesRoute = AdminServicesRouteImport.update({
   id: '/services',
   path: '/services',
   getParentRoute: () => AdminRoute,
+} as any)
+const PSlugRoute = PSlugRouteImport.update({
+  id: '/p/$slug',
+  path: '/p/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ServicesIndexRoute = ServicesIndexRouteImport.update({
   id: '/services/',
@@ -136,10 +148,12 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
   '/admin/customers': typeof AdminCustomersRoute
+  '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
+  '/p/$slug': typeof PSlugRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -155,10 +169,12 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
   '/admin/customers': typeof AdminCustomersRoute
+  '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
+  '/p/$slug': typeof PSlugRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin': typeof AdminIndexRoute
   '/services': typeof ServicesIndexRoute
@@ -177,10 +193,12 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
   '/admin/customers': typeof AdminCustomersRoute
+  '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
   '/admin/schedule': typeof AdminScheduleRoute
   '/admin/service-areas': typeof AdminServiceAreasRoute
   '/admin/services': typeof AdminServicesRoute
+  '/p/$slug': typeof PSlugRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin/': typeof AdminIndexRoute
   '/services/': typeof ServicesIndexRoute
@@ -199,10 +217,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/ongoing-care'
     | '/admin/customers'
+    | '/admin/providers'
     | '/admin/requests'
     | '/admin/schedule'
     | '/admin/service-areas'
     | '/admin/services'
+    | '/p/$slug'
     | '/services/$service'
     | '/admin/'
     | '/services/'
@@ -218,10 +238,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/ongoing-care'
     | '/admin/customers'
+    | '/admin/providers'
     | '/admin/requests'
     | '/admin/schedule'
     | '/admin/service-areas'
     | '/admin/services'
+    | '/p/$slug'
     | '/services/$service'
     | '/admin'
     | '/services'
@@ -239,10 +261,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/ongoing-care'
     | '/admin/customers'
+    | '/admin/providers'
     | '/admin/requests'
     | '/admin/schedule'
     | '/admin/service-areas'
     | '/admin/services'
+    | '/p/$slug'
     | '/services/$service'
     | '/admin/'
     | '/services/'
@@ -260,6 +284,7 @@ export interface RootRouteChildren {
   BookRoute: typeof BookRoute
   LoginRoute: typeof LoginRoute
   OngoingCareRoute: typeof OngoingCareRoute
+  PSlugRoute: typeof PSlugRoute
   ServicesServiceRoute: typeof ServicesServiceRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
 }
@@ -329,6 +354,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCustomersRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/providers': {
+      id: '/admin/providers'
+      path: '/providers'
+      fullPath: '/admin/providers'
+      preLoaderRoute: typeof AdminProvidersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/requests': {
       id: '/admin/requests'
       path: '/requests'
@@ -356,6 +388,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/services'
       preLoaderRoute: typeof AdminServicesRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/p/$slug': {
+      id: '/p/$slug'
+      path: '/p/$slug'
+      fullPath: '/p/$slug'
+      preLoaderRoute: typeof PSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/services/': {
       id: '/services/'
@@ -421,6 +460,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface AdminRouteChildren {
   AdminCustomersRoute: typeof AdminCustomersRoute
+  AdminProvidersRoute: typeof AdminProvidersRoute
   AdminRequestsRoute: typeof AdminRequestsRoute
   AdminScheduleRoute: typeof AdminScheduleRoute
   AdminServiceAreasRoute: typeof AdminServiceAreasRoute
@@ -430,6 +470,7 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminCustomersRoute: AdminCustomersRoute,
+  AdminProvidersRoute: AdminProvidersRoute,
   AdminRequestsRoute: AdminRequestsRoute,
   AdminScheduleRoute: AdminScheduleRoute,
   AdminServiceAreasRoute: AdminServiceAreasRoute,
@@ -447,6 +488,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookRoute: BookRoute,
   LoginRoute: LoginRoute,
   OngoingCareRoute: OngoingCareRoute,
+  PSlugRoute: PSlugRoute,
   ServicesServiceRoute: ServicesServiceRoute,
   ServicesIndexRoute: ServicesIndexRoute,
 }
