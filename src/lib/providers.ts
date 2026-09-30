@@ -17,7 +17,10 @@ export type Provider = {
   time_windows: string[];
   lead_days: number;
   active: boolean;
+  directory_visible: boolean;
 };
+
+export type DirectoryProvider = Provider & { offerings: ProviderOffering[] };
 
 export type ProviderOffering = {
   id: string;
@@ -52,6 +55,28 @@ export const slugify = (s: string) =>
 
 export const formatPrice = (o: Pick<ProviderOffering, "price" | "price_note">) =>
   o.price != null ? `$${Number(o.price).toLocaleString()}${o.price_note ? ` ${o.price_note}` : ""}` : (o.price_note ?? "Quoted after review");
+
+/** Public: approved providers switched on for the Find a Provider directory. */
+export function useProviderDirectory() {
+  return useQuery({
+    queryKey: ["provider-directory"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("providers")
+        .select("*, offerings:provider_services(*, service:services(*))")
+        .eq("active", true)
+        .eq("directory_visible", true)
+        .order("name");
+      if (error) throw error;
+      return ((data ?? []) as unknown as (Provider & { offerings: ProviderOffering[] })[])
+        .map((p) => ({
+          ...p,
+          offerings: p.offerings.filter((o) => o.enabled && o.service && o.service.active),
+        }))
+        .filter((p) => p.offerings.length > 0) as DirectoryProvider[];
+    },
+  });
+}
 
 /** Public: an active provider and only the services it has enabled. */
 export function useProvider(slug: string | undefined) {
