@@ -16,7 +16,6 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OngoingCareRouteImport } from './routes/ongoing-care'
-import { Route as AuthenticatedProviderRouteImport } from './routes/_authenticated/provider'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminCustomersRouteImport } from './routes/admin.customers'
 import { Route as AdminProvidersRouteImport } from './routes/admin.providers'
@@ -31,6 +30,7 @@ import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedAccountHomeCareRouteImport } from './routes/_authenticated/account.home-care'
 import { Route as AuthenticatedAccountPaymentsRouteImport } from './routes/_authenticated/account.payments'
 import { Route as AuthenticatedAccountServicesRouteImport } from './routes/_authenticated/account.services'
+import { Route as AuthenticatedProviderPageRouteImport } from './routes/_authenticated/provider.page'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -65,11 +65,6 @@ const OngoingCareRoute = OngoingCareRouteImport.update({
   id: '/ongoing-care',
   path: '/ongoing-care',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedProviderRoute = AuthenticatedProviderRouteImport.update({
-  id: '/provider',
-  path: '/provider',
-  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -145,6 +140,12 @@ const AuthenticatedAccountServicesRoute =
     path: '/account/services',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedProviderPageRoute =
+  AuthenticatedProviderPageRouteImport.update({
+    id: '/provider/page',
+    path: '/provider/page',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -153,7 +154,6 @@ export interface FileRoutesByFullPath {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
-  '/provider': typeof AuthenticatedProviderRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -167,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/account/payments': typeof AuthenticatedAccountPaymentsRoute
   '/account/services': typeof AuthenticatedAccountServicesRoute
+  '/provider/page': typeof AuthenticatedProviderPageRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRoutesByTo {
@@ -175,7 +176,6 @@ export interface FileRoutesByTo {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
-  '/provider': typeof AuthenticatedProviderRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -189,6 +189,7 @@ export interface FileRoutesByTo {
   '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/account/payments': typeof AuthenticatedAccountPaymentsRoute
   '/account/services': typeof AuthenticatedAccountServicesRoute
+  '/provider/page': typeof AuthenticatedProviderPageRoute
   '/account': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRoutesById {
@@ -200,7 +201,6 @@ export interface FileRoutesById {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
-  '/_authenticated/provider': typeof AuthenticatedProviderRoute
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -214,6 +214,7 @@ export interface FileRoutesById {
   '/_authenticated/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/_authenticated/account/payments': typeof AuthenticatedAccountPaymentsRoute
   '/_authenticated/account/services': typeof AuthenticatedAccountServicesRoute
+  '/_authenticated/provider/page': typeof AuthenticatedProviderPageRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRouteTypes {
@@ -225,7 +226,6 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
-    | '/provider'
     | '/admin/customers'
     | '/admin/providers'
     | '/admin/requests'
@@ -239,6 +239,7 @@ export interface FileRouteTypes {
     | '/account/home-care'
     | '/account/payments'
     | '/account/services'
+    | '/provider/page'
     | '/account/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -247,7 +248,6 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
-    | '/provider'
     | '/admin/customers'
     | '/admin/providers'
     | '/admin/requests'
@@ -261,6 +261,7 @@ export interface FileRouteTypes {
     | '/account/home-care'
     | '/account/payments'
     | '/account/services'
+    | '/provider/page'
     | '/account'
   id:
     | '__root__'
@@ -271,7 +272,6 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
-    | '/_authenticated/provider'
     | '/admin/customers'
     | '/admin/providers'
     | '/admin/requests'
@@ -285,6 +285,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account/home-care'
     | '/_authenticated/account/payments'
     | '/_authenticated/account/services'
+    | '/_authenticated/provider/page'
     | '/_authenticated/account/'
   fileRoutesById: FileRoutesById
 }
@@ -351,13 +352,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/ongoing-care'
       preLoaderRoute: typeof OngoingCareRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/provider': {
-      id: '/_authenticated/provider'
-      path: '/provider'
-      fullPath: '/provider'
-      preLoaderRoute: typeof AuthenticatedProviderRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -457,22 +451,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountServicesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/provider/page': {
+      id: '/_authenticated/provider/page'
+      path: '/provider/page'
+      fullPath: '/provider/page'
+      preLoaderRoute: typeof AuthenticatedProviderPageRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedProviderRoute: typeof AuthenticatedProviderRoute
   AuthenticatedAccountHomeCareRoute: typeof AuthenticatedAccountHomeCareRoute
   AuthenticatedAccountPaymentsRoute: typeof AuthenticatedAccountPaymentsRoute
   AuthenticatedAccountServicesRoute: typeof AuthenticatedAccountServicesRoute
+  AuthenticatedProviderPageRoute: typeof AuthenticatedProviderPageRoute
   AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedProviderRoute: AuthenticatedProviderRoute,
   AuthenticatedAccountHomeCareRoute: AuthenticatedAccountHomeCareRoute,
   AuthenticatedAccountPaymentsRoute: AuthenticatedAccountPaymentsRoute,
   AuthenticatedAccountServicesRoute: AuthenticatedAccountServicesRoute,
+  AuthenticatedProviderPageRoute: AuthenticatedProviderPageRoute,
   AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
 }
 

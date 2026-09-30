@@ -41,9 +41,8 @@ function ProviderDashboard() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
-      
-      <main className="mx-auto max-w-[1000px] px-5 py-10 lg:px-10">
+    <div>
+      <div>
         <h1 className="display-xl text-[2.2rem]">My Provider Page</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Send this link to your customers. They'll only see your services and prices.
@@ -67,8 +66,7 @@ function ProviderDashboard() {
             </p>
           ) : null}
         </div>
-      </main>
-      
+      </div>
     </div>
   );
 }
