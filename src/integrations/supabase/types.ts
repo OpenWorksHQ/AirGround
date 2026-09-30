@@ -226,6 +226,71 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_applications: {
+        Row: {
+          additional_services: string | null
+          business_name: string | null
+          city: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          license_info: string | null
+          phone: string
+          primary_trade: string
+          provider_id: string | null
+          service_area: string
+          state_code: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          additional_services?: string | null
+          business_name?: string | null
+          city: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          license_info?: string | null
+          phone: string
+          primary_trade: string
+          provider_id?: string | null
+          service_area: string
+          state_code?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          additional_services?: string | null
+          business_name?: string | null
+          city?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          license_info?: string | null
+          phone?: string
+          primary_trade?: string
+          provider_id?: string | null
+          service_area?: string
+          state_code?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_applications_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       provider_members: {
         Row: {
           created_at: string
@@ -320,6 +385,7 @@ export type Database = {
           contact_phone: string | null
           created_at: string
           description: string
+          directory_visible: boolean
           id: string
           image_url: string | null
           lead_days: number
@@ -337,6 +403,7 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           description?: string
+          directory_visible?: boolean
           id?: string
           image_url?: string | null
           lead_days?: number
@@ -354,6 +421,7 @@ export type Database = {
           contact_phone?: string | null
           created_at?: string
           description?: string
+          directory_visible?: boolean
           id?: string
           image_url?: string | null
           lead_days?: number
