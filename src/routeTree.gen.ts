@@ -10,33 +10,188 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as BookRouteImport } from './routes/book'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as OngoingCareRouteImport } from './routes/ongoing-care'
+import { Route as ServicesIndexRouteImport } from './routes/services.index'
+import { Route as ServicesServiceRouteImport } from './routes/services.$service'
+import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
+import { Route as AuthenticatedAccountHomeCareRouteImport } from './routes/_authenticated/account.home-care'
+import { Route as AuthenticatedAccountPaymentsRouteImport } from './routes/_authenticated/account.payments'
+import { Route as AuthenticatedAccountServicesRouteImport } from './routes/_authenticated/account.services'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookRoute = BookRouteImport.update({
+  id: '/book',
+  path: '/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OngoingCareRoute = OngoingCareRouteImport.update({
+  id: '/ongoing-care',
+  path: '/ongoing-care',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesIndexRoute = ServicesIndexRouteImport.update({
+  id: '/services/',
+  path: '/services/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicesServiceRoute = ServicesServiceRouteImport.update({
+  id: '/services/$service',
+  path: '/services/$service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAccountIndexRoute =
+  AuthenticatedAccountIndexRouteImport.update({
+    id: '/account/',
+    path: '/account/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAccountHomeCareRoute =
+  AuthenticatedAccountHomeCareRouteImport.update({
+    id: '/account/home-care',
+    path: '/account/home-care',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAccountPaymentsRoute =
+  AuthenticatedAccountPaymentsRouteImport.update({
+    id: '/account/payments',
+    path: '/account/payments',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAccountServicesRoute =
+  AuthenticatedAccountServicesRouteImport.update({
+    id: '/account/services',
+    path: '/account/services',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/book': typeof BookRoute
+  '/login': typeof LoginRoute
+  '/ongoing-care': typeof OngoingCareRoute
+  '/services/$service': typeof ServicesServiceRoute
+  '/services/': typeof ServicesIndexRoute
+  '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
+  '/account/payments': typeof AuthenticatedAccountPaymentsRoute
+  '/account/services': typeof AuthenticatedAccountServicesRoute
+  '/account/': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/book': typeof BookRoute
+  '/login': typeof LoginRoute
+  '/ongoing-care': typeof OngoingCareRoute
+  '/services/$service': typeof ServicesServiceRoute
+  '/services': typeof ServicesIndexRoute
+  '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
+  '/account/payments': typeof AuthenticatedAccountPaymentsRoute
+  '/account/services': typeof AuthenticatedAccountServicesRoute
+  '/account': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
+  '/book': typeof BookRoute
+  '/login': typeof LoginRoute
+  '/ongoing-care': typeof OngoingCareRoute
+  '/services/$service': typeof ServicesServiceRoute
+  '/services/': typeof ServicesIndexRoute
+  '/_authenticated/account/home-care': typeof AuthenticatedAccountHomeCareRoute
+  '/_authenticated/account/payments': typeof AuthenticatedAccountPaymentsRoute
+  '/_authenticated/account/services': typeof AuthenticatedAccountServicesRoute
+  '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/book'
+    | '/login'
+    | '/ongoing-care'
+    | '/services/$service'
+    | '/services/'
+    | '/account/home-care'
+    | '/account/payments'
+    | '/account/services'
+    | '/account/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/book'
+    | '/login'
+    | '/ongoing-care'
+    | '/services/$service'
+    | '/services'
+    | '/account/home-care'
+    | '/account/payments'
+    | '/account/services'
+    | '/account'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/about'
+    | '/admin'
+    | '/book'
+    | '/login'
+    | '/ongoing-care'
+    | '/services/$service'
+    | '/services/'
+    | '/_authenticated/account/home-care'
+    | '/_authenticated/account/payments'
+    | '/_authenticated/account/services'
+    | '/_authenticated/account/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
+  BookRoute: typeof BookRoute
+  LoginRoute: typeof LoginRoute
+  OngoingCareRoute: typeof OngoingCareRoute
+  ServicesServiceRoute: typeof ServicesServiceRoute
+  ServicesIndexRoute: typeof ServicesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +203,120 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book': {
+      id: '/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof BookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ongoing-care': {
+      id: '/ongoing-care'
+      path: '/ongoing-care'
+      fullPath: '/ongoing-care'
+      preLoaderRoute: typeof OngoingCareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/': {
+      id: '/services/'
+      path: '/services'
+      fullPath: '/services/'
+      preLoaderRoute: typeof ServicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/services/$service': {
+      id: '/services/$service'
+      path: '/services/$service'
+      fullPath: '/services/$service'
+      preLoaderRoute: typeof ServicesServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/account/': {
+      id: '/_authenticated/account/'
+      path: '/account'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/account/home-care': {
+      id: '/_authenticated/account/home-care'
+      path: '/account/home-care'
+      fullPath: '/account/home-care'
+      preLoaderRoute: typeof AuthenticatedAccountHomeCareRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/account/payments': {
+      id: '/_authenticated/account/payments'
+      path: '/account/payments'
+      fullPath: '/account/payments'
+      preLoaderRoute: typeof AuthenticatedAccountPaymentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/account/services': {
+      id: '/_authenticated/account/services'
+      path: '/account/services'
+      fullPath: '/account/services'
+      preLoaderRoute: typeof AuthenticatedAccountServicesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountHomeCareRoute: typeof AuthenticatedAccountHomeCareRoute
+  AuthenticatedAccountPaymentsRoute: typeof AuthenticatedAccountPaymentsRoute
+  AuthenticatedAccountServicesRoute: typeof AuthenticatedAccountServicesRoute
+  AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountHomeCareRoute: AuthenticatedAccountHomeCareRoute,
+  AuthenticatedAccountPaymentsRoute: AuthenticatedAccountPaymentsRoute,
+  AuthenticatedAccountServicesRoute: AuthenticatedAccountServicesRoute,
+  AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
+  BookRoute: BookRoute,
+  LoginRoute: LoginRoute,
+  OngoingCareRoute: OngoingCareRoute,
+  ServicesServiceRoute: ServicesServiceRoute,
+  ServicesIndexRoute: ServicesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
