@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Logo } from "@/components/brand";
 import { ButtonLink, Button } from "@/components/ag";
 import { useAuth, signOutEverywhere } from "@/hooks/use-auth";
+import { useHomeRoute } from "@/hooks/use-home-route";
 import { useLocationArea } from "@/hooks/use-location";
 
 const NAV = [
@@ -46,6 +47,9 @@ function LocationSelect({ className = "" }: { className?: string }) {
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
+  const { data: home } = useHomeRoute();
+  const homeTo = home ?? "/account";
+  const homeLabel = home === "/admin" ? "Dashboard" : home === "/provider" ? "My Provider Page" : "My Home";
   const navigate = useNavigate();
 
   const signOut = async () => {
@@ -77,8 +81,8 @@ export function SiteHeader() {
           <LocationSelect className="w-[190px]" />
           {user ? (
             <>
-              <ButtonLink to="/account" variant="outline">
-                My Home
+              <ButtonLink to={homeTo} variant="outline">
+                {homeLabel}
               </ButtonLink>
               <Button variant="quiet" size="sm" onClick={signOut}>
                 Sign out
@@ -89,7 +93,6 @@ export function SiteHeader() {
               Sign in
             </ButtonLink>
           )}
-          <ButtonLink to="/admin">Admin Portal</ButtonLink>
         </div>
 
         <button
@@ -120,8 +123,8 @@ export function SiteHeader() {
             <LocationSelect />
             {user ? (
               <>
-                <ButtonLink to="/account" variant="outline" className="w-full" onClick={() => setOpen(false)}>
-                  My Home
+                <ButtonLink to={homeTo} variant="outline" className="w-full" onClick={() => setOpen(false)}>
+                  {homeLabel}
                 </ButtonLink>
                 <Button variant="quiet" className="w-full" onClick={signOut}>
                   Sign out
@@ -132,9 +135,6 @@ export function SiteHeader() {
                 Sign in
               </ButtonLink>
             )}
-            <ButtonLink to="/admin" className="w-full" onClick={() => setOpen(false)}>
-              Admin Portal
-            </ButtonLink>
           </div>
         </div>
       ) : null}

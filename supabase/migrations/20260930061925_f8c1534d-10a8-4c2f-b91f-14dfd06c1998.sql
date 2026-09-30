@@ -1,0 +1,1 @@
+ALTER FUNCTION public.is_provider_member(uuid) SECURITY INVOKER;
