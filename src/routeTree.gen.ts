@@ -26,6 +26,7 @@ import { Route as AdminScheduleRouteImport } from './routes/admin.schedule'
 import { Route as AdminServiceAreasRouteImport } from './routes/admin.service-areas'
 import { Route as AdminServicesRouteImport } from './routes/admin.services'
 import { Route as PSlugRouteImport } from './routes/p.$slug'
+import { Route as ProvidersIndexRouteImport } from './routes/providers.index'
 import { Route as ProvidersApplyRouteImport } from './routes/providers.apply'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesServiceRouteImport } from './routes/services.$service'
@@ -125,6 +126,11 @@ const PSlugRoute = PSlugRouteImport.update({
   id: '/p/$slug',
   path: '/p/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ProvidersIndexRoute = ProvidersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProvidersRoute,
 } as any)
 const ProvidersApplyRoute = ProvidersApplyRouteImport.update({
   id: '/apply',
@@ -233,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/providers/apply': typeof ProvidersApplyRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin/': typeof AdminIndexRoute
+  '/providers/': typeof ProvidersIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/account/payments': typeof AuthenticatedAccountPaymentsRoute
@@ -253,7 +260,6 @@ export interface FileRoutesByTo {
   '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/ongoing-care': typeof OngoingCareRoute
-  '/providers': typeof ProvidersRouteWithChildren
   '/admin/customers': typeof AdminCustomersRoute
   '/admin/providers': typeof AdminProvidersRoute
   '/admin/requests': typeof AdminRequestsRoute
@@ -264,6 +270,7 @@ export interface FileRoutesByTo {
   '/providers/apply': typeof ProvidersApplyRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin': typeof AdminIndexRoute
+  '/providers': typeof ProvidersIndexRoute
   '/services': typeof ServicesIndexRoute
   '/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/account/payments': typeof AuthenticatedAccountPaymentsRoute
@@ -299,6 +306,7 @@ export interface FileRoutesById {
   '/providers/apply': typeof ProvidersApplyRoute
   '/services/$service': typeof ServicesServiceRoute
   '/admin/': typeof AdminIndexRoute
+  '/providers/': typeof ProvidersIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/_authenticated/account/home-care': typeof AuthenticatedAccountHomeCareRoute
   '/_authenticated/account/payments': typeof AuthenticatedAccountPaymentsRoute
@@ -334,6 +342,7 @@ export interface FileRouteTypes {
     | '/providers/apply'
     | '/services/$service'
     | '/admin/'
+    | '/providers/'
     | '/services/'
     | '/account/home-care'
     | '/account/payments'
@@ -354,7 +363,6 @@ export interface FileRouteTypes {
     | '/book'
     | '/login'
     | '/ongoing-care'
-    | '/providers'
     | '/admin/customers'
     | '/admin/providers'
     | '/admin/requests'
@@ -365,6 +373,7 @@ export interface FileRouteTypes {
     | '/providers/apply'
     | '/services/$service'
     | '/admin'
+    | '/providers'
     | '/services'
     | '/account/home-care'
     | '/account/payments'
@@ -399,6 +408,7 @@ export interface FileRouteTypes {
     | '/providers/apply'
     | '/services/$service'
     | '/admin/'
+    | '/providers/'
     | '/services/'
     | '/_authenticated/account/home-care'
     | '/_authenticated/account/payments'
@@ -548,6 +558,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/p/$slug'
       preLoaderRoute: typeof PSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/providers/': {
+      id: '/providers/'
+      path: '/'
+      fullPath: '/providers/'
+      preLoaderRoute: typeof ProvidersIndexRouteImport
+      parentRoute: typeof ProvidersRoute
     }
     '/providers/apply': {
       id: '/providers/apply'
@@ -727,10 +744,12 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ProvidersRouteChildren {
   ProvidersApplyRoute: typeof ProvidersApplyRoute
+  ProvidersIndexRoute: typeof ProvidersIndexRoute
 }
 
 const ProvidersRouteChildren: ProvidersRouteChildren = {
   ProvidersApplyRoute: ProvidersApplyRoute,
+  ProvidersIndexRoute: ProvidersIndexRoute,
 }
 
 const ProvidersRouteWithChildren = ProvidersRoute._addFileChildren(
