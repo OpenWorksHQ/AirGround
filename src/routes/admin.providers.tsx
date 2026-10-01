@@ -261,6 +261,8 @@ function AdminProviders() {
         </Button>
       </div>
 
+      <AdminApplications />
+
       <div className="mt-6 divide-y divide-border rounded-2xl border border-border bg-card">
         {(providers ?? []).map((p) => (
           <div key={p.id} className="px-6 py-4">
@@ -268,6 +270,7 @@ function AdminProviders() {
               <button className="min-w-0 text-left" onClick={() => setOpenId(openId === p.id ? null : p.id)}>
                 <p className="truncate text-sm font-bold">
                   {p.name} {p.active ? "" : "· inactive"}
+                  {p.directory_visible ? "" : " · not in directory"}
                 </p>
                 <p className="mt-1 truncate text-xs text-muted-foreground">
                   /p/{p.slug} · {counts?.[p.id] ?? 0} bookings
@@ -327,6 +330,7 @@ function ProviderEditor({ provider }: { provider: Provider }) {
         time_windows: form.time_windows,
         lead_days: Number(form.lead_days) || 0,
         active: form.active,
+        directory_visible: form.directory_visible,
       })
       .eq("id", provider.id);
     if (error) {
@@ -416,6 +420,12 @@ function ProviderEditor({ provider }: { provider: Provider }) {
         <Button onClick={save}>Save provider</Button>
         <Button variant={form.active ? "soft" : "outline"} onClick={() => set({ active: !form.active })}>
           {form.active ? "Active — click to deactivate" : "Inactive — click to activate"}
+        </Button>
+        <Button
+          variant={form.directory_visible ? "soft" : "outline"}
+          onClick={() => set({ directory_visible: !form.directory_visible })}
+        >
+          {form.directory_visible ? "In directory — click to hide" : "Not in directory — click to show"}
         </Button>
       </div>
 

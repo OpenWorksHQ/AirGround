@@ -64,15 +64,19 @@ function ProviderApplyPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.fullName.trim().length < 2) return toast.error("Enter your full name.");
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) return toast.error("Enter a valid email.");
-    if (form.phone.trim().length < 7) return toast.error("Enter a valid phone number.");
-    if (!form.primaryTrade) return toast.error("Choose your primary trade.");
-    if (form.city.trim().length < 2) return toast.error("Enter your city.");
-    if (form.serviceArea.trim().length < 2) return toast.error("Enter your service area.");
+    const fail = (msg: string) => {
+      toast.error(msg);
+      return;
+    };
+    if (form.fullName.trim().length < 2) return fail("Enter your full name.");
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email.trim())) return fail("Enter a valid email.");
+    if (form.phone.trim().length < 7) return fail("Enter a valid phone number.");
+    if (!form.primaryTrade) return fail("Choose your primary trade.");
+    if (form.city.trim().length < 2) return fail("Enter your city.");
+    if (form.serviceArea.trim().length < 2) return fail("Enter your service area.");
     let userId = user?.id ?? null;
     if (!userId) {
-      if (form.password.length < 8) return toast.error("Create a password of at least 8 characters.");
+      if (form.password.length < 8) return fail("Create a password of at least 8 characters.");
       setBusy(true);
       const { data: signedUp, error: signUpError } = await supabase.auth.signUp({
         email: form.email.trim(),
@@ -81,10 +85,12 @@ function ProviderApplyPage() {
       });
       if (signUpError) {
         setBusy(false);
-        return toast.error(
+        return fail(
           signUpError.message.includes("already")
             ? "An AirGround account already uses this email. Sign in first, then apply."
-            : "Couldn't create your account. Please try again.",
+            : signUpError.message.includes("weak_password")
+              ? "That password is too easy to guess. Choose a longer one with numbers and symbols."
+              : signUpError.message,
         );
       }
       userId = signedUp.user?.id ?? null;
