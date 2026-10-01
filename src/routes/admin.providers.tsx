@@ -261,6 +261,8 @@ function AdminProviders() {
         </Button>
       </div>
 
+      <AdminApplications />
+
       <div className="mt-6 divide-y divide-border rounded-2xl border border-border bg-card">
         {(providers ?? []).map((p) => (
           <div key={p.id} className="px-6 py-4">
@@ -268,6 +270,7 @@ function AdminProviders() {
               <button className="min-w-0 text-left" onClick={() => setOpenId(openId === p.id ? null : p.id)}>
                 <p className="truncate text-sm font-bold">
                   {p.name} {p.active ? "" : "· inactive"}
+                  {p.directory_visible ? "" : " · not in directory"}
                 </p>
                 <p className="mt-1 truncate text-xs text-muted-foreground">
                   /p/{p.slug} · {counts?.[p.id] ?? 0} bookings
