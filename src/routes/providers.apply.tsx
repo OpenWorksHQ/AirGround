@@ -88,7 +88,9 @@ function ProviderApplyPage() {
         return fail(
           signUpError.message.includes("already")
             ? "An AirGround account already uses this email. Sign in first, then apply."
-            : "Couldn't create your account. Please try again.",
+            : signUpError.message.includes("weak_password")
+              ? "That password is too easy to guess. Choose a longer one with numbers and symbols."
+              : signUpError.message,
         );
       }
       userId = signedUp.user?.id ?? null;
