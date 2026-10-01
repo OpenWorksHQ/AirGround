@@ -327,6 +327,7 @@ function ProviderEditor({ provider }: { provider: Provider }) {
         time_windows: form.time_windows,
         lead_days: Number(form.lead_days) || 0,
         active: form.active,
+        directory_visible: form.directory_visible,
       })
       .eq("id", provider.id);
     if (error) {
@@ -416,6 +417,12 @@ function ProviderEditor({ provider }: { provider: Provider }) {
         <Button onClick={save}>Save provider</Button>
         <Button variant={form.active ? "soft" : "outline"} onClick={() => set({ active: !form.active })}>
           {form.active ? "Active — click to deactivate" : "Inactive — click to activate"}
+        </Button>
+        <Button
+          variant={form.directory_visible ? "soft" : "outline"}
+          onClick={() => set({ directory_visible: !form.directory_visible })}
+        >
+          {form.directory_visible ? "In directory — click to hide" : "Not in directory — click to show"}
         </Button>
       </div>
 
